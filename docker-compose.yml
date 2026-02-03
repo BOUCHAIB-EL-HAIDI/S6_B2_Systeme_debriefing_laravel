@@ -1,0 +1,61 @@
+
+services:
+
+  php:
+    build: .
+    container_name: php2
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./src:/var/www/html"
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+    command: php artisan serve --host=0.0.0.0 --port=8000
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: postgres2
+    restart: always
+    environment:
+      POSTGRES_DB: "debriefing_system"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "bouchaib@123"
+    ports:
+      - "2004:5432"
+    networks:
+      - app-network
+    volumes:
+      - pgtables:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin2
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "bouchaibelhaidi1@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: "bouchaib@123"
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+
+  puml:
+    image: plantuml/plantuml-server:jetty
+    container_name: puml2
+    restart: always
+    ports:
+      - "4040:8080"
+    networks:
+      - app-network
+    volumes:
+      - "./uml:/var/www/html/uml"
+
+volumes:
+  pgtables:
+networks:
+  app-network:
+    driver: bridge
