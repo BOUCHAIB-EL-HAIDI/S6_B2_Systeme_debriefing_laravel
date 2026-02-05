@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-       Schema::create('debriefing_competence', function (Blueprint $table) {
-       $table->foreignId('debriefing_id')->constrained('debriefing')->cascadeOnDelete();
+       Schema::create('competence_debriefing', function (Blueprint $table) {
+       $table->foreignId('debriefing_id')->constrained('debriefings')->cascadeOnDelete();
        $table->string('competence_code', 20)
-             ->constrained('competence')->cascadeOnDelete();
+             ->constrained('competences')->cascadeOnDelete();
         $table->enum('niveau', ['NIVEAU_1','NIVEAU_2','NIVEAU_3']);
         $table->enum('status', ['VALIDEE','INVALIDE']);
         $table->primary(['debriefing_id','competence_code']);
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('debriefing_competence');
+        Schema::dropIfExists('competence_debriefing');
     }
 };
