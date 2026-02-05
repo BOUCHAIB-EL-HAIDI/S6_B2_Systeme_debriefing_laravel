@@ -19,12 +19,12 @@ return new class extends Migration
             $table->string('email', 150)->unique();
             $table->string('password');
 
-            
+
             $table->enum('role', ['STUDENT','TEACHER','ADMIN']);
 
             $table->foreignId('classe_id')
                   ->nullable()
-                  ->constrained('classe')
+                  ->constrained('classes')
                   ->nullOnDelete();
 
             $table->timestamps();

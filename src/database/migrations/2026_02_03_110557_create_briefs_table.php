@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('brief', function (Blueprint $table) {
+        Schema::create('briefs', function (Blueprint $table) {
          $table->id();
          $table->string('title', 150);
          $table->text('content')->nullable();
@@ -19,12 +19,12 @@ return new class extends Migration
          $table->date('end_date');
          $table->enum('type', ['INDIVIDUAL','COLLECTIVE']);
          $table->boolean('is_assigned')->default(false);
-         $table->foreignId('sprint_id')->constrained('sprint')->cascadeOnDelete();
+         $table->foreignId('sprint_id')->constrained('sprints')->cascadeOnDelete();
          $table->foreignId('teacher_id')->constrained('users')->cascadeOnDelete();
          $table->timestamp('created_at')->useCurrent();
         });
         DB::statement("
-        ALTER TABLE brief ADD CONSTRAINT chk_dates CHECK (end_date >= start_date)
+        ALTER TABLE briefs ADD CONSTRAINT chk_dates CHECK (end_date >= start_date)
          ");
 
 
@@ -35,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('brief');
+        Schema::dropIfExists('briefs');
     }
 };

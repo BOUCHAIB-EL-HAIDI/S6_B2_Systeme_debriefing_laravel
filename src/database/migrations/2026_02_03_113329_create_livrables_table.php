@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('livrable', function (Blueprint $table) {
+        Schema::create('livrables', function (Blueprint $table) {
             $table->id();
             $table->text('content');
             $table->text('comment');
             $table->timestamp('submitted_at')->useCurrent();
             $table->foreignId('student_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('brief_id')->constrained('brief')->cascadeOnDelete();
+            $table->foreignId('brief_id')->constrained('briefs')->cascadeOnDelete();
             $table->unique(['student_id','brief_id']);
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('livrable');
+        Schema::dropIfExists('livrables');
     }
 };

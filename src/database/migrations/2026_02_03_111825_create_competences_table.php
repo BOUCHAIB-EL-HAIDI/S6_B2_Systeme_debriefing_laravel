@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('competence', function (Blueprint $table) {
+        Schema::create('competences', function (Blueprint $table) {
             $table->string('code' , 20)->primary();
             $table->string('label', 150);
             $table->timestamp('created_at')->useCurrent();
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('competence');
+        Schema::dropIfExists('competences');
     }
 };

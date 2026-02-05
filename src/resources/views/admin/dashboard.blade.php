@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - Debrief.me</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    </style>
+</head>
+<body class="bg-[#0f172a] text-slate-100 min-h-screen">
+
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 glass border-r border-white/10 p-6 flex flex-col fixed h-full">
+            <div class="flex items-center gap-3 text-2xl font-extrabold mb-10">
+                <i data-lucide="graduation-cap" class="text-indigo-500"></i>
+                <span>Debrief.me</span>
+            </div>
+
+            <nav class="space-y-2 flex-1">
+                <a href="#" class="flex items-center gap-3 p-3 rounded-xl text-white bg-indigo-500 shadow-lg shadow-indigo-500/20">
+                    <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
+                </a>
+                <a href="/admin/users" class="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all text-slate-400 hover:text-white">
+                    <i data-lucide="users"></i> <span>Utilisateurs</span>
+                </a>
+                <a href="/admin/classes" class="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all text-slate-400 hover:text-white">
+                    <i data-lucide="book-open"></i> <span>Classes</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all text-slate-400 hover:text-white">
+                    <i data-lucide="target"></i> <span>Compétences</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all text-slate-400 hover:text-white">
+                    <i data-lucide="layers"></i> <span>Sprints</span>
+                </a>
+            </nav>
+
+            <div class="pt-6 border-t border-white/10">
+                <a href="#" class="flex items-center gap-3 p-3 rounded-xl text-rose-400 hover:bg-rose-500/10 transition-all">
+                    <i data-lucide="log-out"></i> <span>Déconnexion</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 ml-64 p-8">
+            <header class="flex justify-between items-center mb-10">
+                <div>
+                    <h1 class="text-3xl font-extrabold">Console Administration</h1>
+                    <p class="text-slate-400 mt-1">Vue d'ensemble du système et statistiques globales</p>
+                </div>
+                <div class="glass px-4 py-2 rounded-2xl flex items-center gap-3">
+                    <div class="text-right">
+                        <p class="text-sm font-bold">Admin</p>
+                        <p class="text-[10px] text-slate-400 uppercase tracking-wider">ADMINISTRATEUR</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold">
+                        A
+                    </div>
+                </div>
+            </header>
+
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+                <div class="glass p-6 rounded-3xl group hover:border-indigo-500/50 transition-all">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-3 bg-indigo-500/10 rounded-xl text-indigo-400"><i data-lucide="users"></i></div>
+                    </div>
+                    <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Total Apprenants</p>
+                    <h2 class="text-3xl font-extrabold text-white">0</h2>
+                </div>
+                <div class="glass p-6 rounded-3xl group hover:border-emerald-500/50 transition-all">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-3 bg-emerald-500/10 rounded-xl text-emerald-400"><i data-lucide="user-check"></i></div>
+                    </div>
+                    <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Formateurs</p>
+                    <h2 class="text-3xl font-extrabold text-white">0</h2>
+                </div>
+                <div class="glass p-6 rounded-3xl group hover:border-rose-500/50 transition-all">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-3 bg-rose-500/10 rounded-xl text-rose-400"><i data-lucide="book-open"></i></div>
+                    </div>
+                    <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Classes</p>
+                    <h2 class="text-3xl font-extrabold text-white">0</h2>
+                </div>
+                <div class="glass p-6 rounded-3xl group hover:border-indigo-300/50 transition-all">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-3 bg-slate-500/10 rounded-xl text-slate-400"><i data-lucide="layers"></i></div>
+                    </div>
+                    <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Sprints Totaux</p>
+                    <h2 class="text-3xl font-extrabold text-white">0</h2>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Recent Actions -->
+                <div class="glass p-8 rounded-3xl">
+                    <div class="flex justify-between items-center mb-8">
+                        <h3 class="text-xl font-bold">Actions Récentes</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4 p-4 bg-slate-900/40 rounded-2xl border border-white/5">
+                            <div class="p-2 bg-indigo-500/10 text-indigo-400 rounded-lg">
+                                <i data-lucide="activity" class="w-4 h-4"></i>
+                            </div>
+                            <span class="text-xs text-slate-300">Aucune action récente</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Health Insights -->
+                <div class="glass p-8 rounded-3xl flex flex-col items-center justify-center text-center">
+                    <div class="w-48 h-48 rounded-full border-8 border-indigo-500/20 border-t-indigo-500 flex items-center justify-center mb-6 relative">
+                        <div class="flex flex-col">
+                            <span class="text-4xl font-black">0%</span>
+                            <span class="text-[10px] text-slate-500 uppercase font-bold">Promotion</span>
+                        </div>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">Engagement Global</h3>
+                    <p class="text-sm text-slate-400 max-w-xs">Taux de participation et achèvement des livrables sur la période actuelle.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

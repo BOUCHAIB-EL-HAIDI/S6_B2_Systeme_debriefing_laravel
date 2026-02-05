@@ -18,7 +18,7 @@
         <div class="glass p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
             <!-- Decorative blur -->
             <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/20 blur-3xl"></div>
-            
+
             <div class="flex flex-col items-center mb-10 relative z-10">
                 <div class="w-16 h-16 bg-indigo-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-indigo-500/20">
                     <i data-lucide="graduation-cap" class="text-white w-10 h-10"></i>
@@ -27,19 +27,20 @@
                 <p class="text-slate-400 mt-2 text-sm">Bienvenue sur votre plateforme de suivi</p>
             </div>
 
-            <form action="/login" method="POST" class="space-y-6 relative z-10">
-                @if(isset($_SESSION['error']))
-  
-                <p class="text-red-700 text-center ">{{ $_SESSION['error']   }} </p>
-                @php unset($_SESSION['error']) ; @endphp
-                @endif
+            <form action="{{  route('auth.submitLogin')   }}" method="POST" class="space-y-6 relative z-10">
+
+                @csrf
+
+               @error('email')
+                <p class="text-red-600 font-small text-center">{{ $message }}</p>
+                @enderror
 
 
                 <div class="space-y-2">
                     <label class="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Email</label>
                     <div class="relative">
                         <i data-lucide="mail" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500"></i>
-                        <input type="email" value="{{   $_SESSION['old']['email'] ?? ''   }}" name="email" required class="w-full bg-slate-900/50 border border-white/10 rounded-2xl py-4 pl-12 pr-4 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all" placeholder="nom@exemple.com">
+                        <input type="email" value="{{ old('email') }}" name="email" required class="w-full bg-slate-900/50 border border-white/10 rounded-2xl py-4 pl-12 pr-4 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all" placeholder="nom@exemple.com">
                     </div>
                 </div>
 
@@ -64,7 +65,7 @@
                 </button>
             </form>
         </div>
-        
+
     </div>
 
     <script>

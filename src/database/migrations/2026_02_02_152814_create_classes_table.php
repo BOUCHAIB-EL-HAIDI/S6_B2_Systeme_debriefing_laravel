@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sprint', function (Blueprint $table) {
+        Schema::create('classes', function (Blueprint $table) {
             $table->id();
             $table->string('name' , 100);
-            $table->integer('duration');
-             $table->integer('order');
-             $table->foreignId('classe_id')->constrained('classe')->cascadeOnDelete();
-             $table->timestamp('created_at')->useCurrent();
+            $table->integer('year');
+            $table->timestamps();
         });
     }
 
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sprint');
+        Schema::dropIfExists('classes');
     }
 };
