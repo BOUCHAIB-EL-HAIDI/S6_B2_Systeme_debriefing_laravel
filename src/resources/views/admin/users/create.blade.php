@@ -60,17 +60,32 @@
 
 
                 <div class="glass p-8 rounded-[2.5rem] shadow-2xl">
-                    <form action="#" method="POST" class="space-y-6">
+
+                   @if ($errors->any())
+
+                    <div class="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 font-bold">
+                       <ul class="list-disc ml-5 text-sm">
+                        @foreach ($errors->all() as $error)
+
+                           <li>{{  $error  }} </li>
+                        @endforeach
+                       </ul>
+                    </div>
+                    @endif
+
+                    <form action="{{ route('admin.users.store') }}" method="POST" class="space-y-6">
+
+                        @csrf
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Prénom</label>
-                                <input type="text" name="first_name" value ="{{ $old['first_name'] ?? ''   }}" required
+                                <input type="text" name="first_name" value ="{{ old('first_name') }}" required
                                        placeholder="ex : bouchaib"
                                        class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Nom</label>
-                                <input type="text" name="last_name" value ="{{ $old['last_name'] ?? ''   }}" required
+                                <input type="text" name="last_name" value ="{{ old('last_name') }}" required
                                        placeholder="ex : El Haidi"
                                        class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600">
                             </div>
@@ -78,7 +93,7 @@
 
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Email</label>
-                            <input type="email" name="email" value ="{{ $old['email'] ?? ''   }} "required
+                            <input type="email" name="email" value ="{{ old('email') }} "required
                                    placeholder="saad@debrief.me"
                                    class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600">
                         </div>
@@ -94,9 +109,9 @@
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Rôle</label>
                             <select id="roleSelect" name="role" required
                                     class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-slate-300">
-                                <option value="STUDENT" {{ (isset($old['role']) && $old['role'] === 'STUDENT') ? 'selected' : ''}}>Apprenant</option>
-                                <option value="TEACHER" {{ (isset($old['role']) && $old['role'] === 'TEACHER') ? 'selected' : ''}}>Formateur</option>
-                                <option value="ADMIN" {{ (isset($old['role']) && $old['role'] === 'ADMIN') ? 'selected' : ''}}>Administrateur</option>
+                                <option value="STUDENT" {{ old('role') === 'STUDENT' ? 'selected' : '' }}>Apprenant</option>
+                                <option value="TEACHER" {{ old('role') === 'TEACHER' ? 'selected' : '' }}>Formateur</option>
+                                <option value="ADMIN" {{ old('role') === 'ADMIN' ? 'selected' : '' }}>Administrateur</option>
                             </select>
                         </div>
 
@@ -108,8 +123,8 @@
                                     class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-slate-300">
                                 <option value="">Choisir une classe...</option>
 
-                                @foreach($classes as $class)
-                                <option value="{{ $class['id'] }}" {{ (isset($old['classe_id'])) && $old['classe_id'] == $class['id'] ? 'selected' : ''}}>
+                                @foreach($allClasses as $class)
+                                <option value="{{ $class['id'] }}" {{ old('classe_id') == $class['id'] ? 'selected' : '' }}>
                                     {{$class['name']   }} ({{$class['year']}})
                                 </option>
                                 @endforeach
@@ -118,7 +133,11 @@
                             <!-- Teacher (Available Only) Select -->
                             <select name="classe_id" id="teacherClassSelect" class="hidden w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-slate-300">
                                 <option value="">Choisir une classe disponible...</option>
-                                <option value="1">WEB-2024-A (2024)</option>
+                                 @foreach($unassignedClasses as $class)
+                                 <option value="{{ $class['id'] }}" {{ old('classe_id') == $class['id'] ? 'selected' : '' }}>
+                                    {{$class['name']   }} ({{$class['year']}})
+                                 </option>
+                                @endforeach
                             </select>
                         </div>
 
@@ -126,7 +145,11 @@
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Classes de renfort (Backup)</label>
                             <select name="backup_classes[]" multiple size="4"
                                     class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-slate-300 scrollbar-thin scrollbar-thumb-indigo-500">
-                                <option value="1">WEB-2024-A (2024)</option>
+                               @foreach($allClasses as $class)
+                                <option value="{{ $class['id'] }}" >
+                                    {{$class['name']   }} ({{$class['year']}})
+                                </option>
+                                @endforeach
                             </select>
                             <p class="text-[10px] text-slate-500 mt-2 ml-1 italic">Maintenez Ctrl (ou Cmd) pour sélectionner plusieurs classes.</p>
                         </div>

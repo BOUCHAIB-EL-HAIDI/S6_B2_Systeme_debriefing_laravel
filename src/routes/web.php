@@ -27,4 +27,4 @@ Route::delete('/admin/classes/{id}', [ClasseController::class, 'destroy'])->name
 //user routes
 Route::get('/admin/users', [UserController::class, 'showUsers'])->name('admin.users.showusers');
 Route::get('/admin/users/create' ,[UserController::class , 'create'] )->name('admin.users.create');
-Route::post('/admin/classes', [UserController::class, 'store'])->name('admin.users.store');
+Route::post('/admin/users/create', [UserController::class, 'store'])->name('admin.users.store');

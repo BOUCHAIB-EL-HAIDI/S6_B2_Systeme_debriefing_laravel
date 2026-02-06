@@ -102,7 +102,7 @@ class User extends Authenticatable
             'classe_teacher',
             'teacher_id',
             'classe_id'
-        )->withTimestamps();
+        )->withPivot('assigned_at');
     }
 
     // Primary class of the teacher (from users.classe_id)

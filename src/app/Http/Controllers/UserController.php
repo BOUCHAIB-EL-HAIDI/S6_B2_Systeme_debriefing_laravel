@@ -15,8 +15,10 @@ class UserController extends Controller
      }
      public function create(){
 
-        $classes = Classe::all();
-        return view('admin.users.create' , compact('classes'));
+        $usedClassIds = User::Teachers()->whereNotNull('classe_id')->pluck('classe_id');
+        $unassignedClasses = Classe::whereNotIn('id' , $usedClassIds)->get();
+        $allClasses =Classe::all();
+        return view('admin.users.create' , compact('unassignedClasses' ,'allClasses' ));
      }
 
      public function store(Request $request){
@@ -34,8 +36,7 @@ class UserController extends Controller
         //only for teachers
 
         'backup_classes' =>'nullable|array',
-        'backup_classes.*' =>'exists:classes , id',
-
+        'backup_classes.*' =>'exists:classes,id',
 
      ]);
 
@@ -66,6 +67,7 @@ class UserController extends Controller
 
 
      }
+
 
 
 

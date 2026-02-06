@@ -54,12 +54,20 @@
                     <h1 class="text-3xl font-extrabold">Gestion des Utilisateurs</h1>
                     <p class="text-slate-400 mt-1">Créez et gérez les comptes apprenants et formateurs</p>
                 </div>
+
+
                 <a href="/admin/users/create" class="bg-indigo-500 hover:bg-indigo-600 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-indigo-500/20 text-sm">
                     <i data-lucide="user-plus" class="w-4 h-4"></i>
                     Nouvel Utilisateur
                 </a>
             </header>
 
+            @if(session('success'))
+            <div id="success-message"
+                class="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold">
+             {{ session('success') }}
+            </div>
+             @endif
             <!-- Filters -->
             <div class="glass p-6 rounded-3xl mb-8 flex flex-wrap gap-4 items-center">
                 <div class="flex-1 min-w-[200px] relative">
