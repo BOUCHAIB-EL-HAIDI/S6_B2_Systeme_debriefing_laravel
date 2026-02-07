@@ -136,12 +136,18 @@
                                      <i data-lucide="edit-3" class="w-4 h-4"></i>
                                     </a>
 
+                                   <form action="{{  route('admin.users.destroy' , $user['id'])    }}"
+                                    method="POST"
+                                    onsubmit="return confirm('voulez vous supprimer cet utilisateur ?');">
 
+                                    @csrf
+                                    @method('DELETE')
+                                     <button type="submit"
+                                      class="p-2 hover:bg-rose-500/20 text-rose-400 rounded-lg transition-colors">
+                                     <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    </button>
+                                     </form>
 
-
-
-
-                                    <button class="p-2 hover:bg-rose-500/20 text-rose-400 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                                 </div>
                             </td>
                         </tr>

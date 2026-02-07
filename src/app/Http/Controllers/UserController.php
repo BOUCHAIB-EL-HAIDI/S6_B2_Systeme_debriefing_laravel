@@ -11,9 +11,9 @@ class UserController extends Controller
 {
      public function showUsers(){
 
-    //  $users = User::where('role' , '!=' , 'ADMIN')->get();
 
-    $users = User::with('classe')  // eager load the 'classe' relationship
+
+    $users = User::with('classe')
     ->where('role', '!=', 'ADMIN')
     ->paginate(6);
 
@@ -112,14 +112,18 @@ class UserController extends Controller
 
      return redirect()->route('admin.users.showusers')
                      ->with('success', 'Utilisateur mis à jour avec succès.');
-
-
-
-
       }
 
+      public function destroy($id)
+     {
+       $user = User::findOrFail($id);
+      if($user->isTeacher()){
+       $user->classes()->detach();
+      }
+      $user->delete();
 
-
+       return redirect()->route('admin.users.showusers')->with('success', 'Utilisateur supprimé avec succès');
+     }
 
 
 
