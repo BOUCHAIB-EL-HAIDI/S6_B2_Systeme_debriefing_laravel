@@ -53,8 +53,8 @@
                         <i data-lucide="chevron-left" class="w-5 h-5"></i>
                     </a>
                     <div>
-                        <h1 class="text-3xl font-extrabold">Nouvel Utilisateur</h1>
-                        <p class="text-slate-400 mt-1">Créez un compte pour un apprenant, formateur ou admin</p>
+                        <h1 class="text-3xl font-extrabold">Modifier Un Utilisateur</h1>
+                        <p class="text-slate-400 mt-1">Modifier un compte pour un apprenant, formateur </p>
                     </div>
                 </header>
 
@@ -117,11 +117,11 @@
                             </select>
                         </div>
 
-                      
+
                         <div class="pt-6">
                             <button type="submit" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white py-4 rounded-2xl font-bold transition-all shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2">
                                 <i data-lucide="user-plus" class="w-5 h-5"></i>
-                                Créer l'utilisateur
+                                Modifier l'Utilisateur
                             </button>
                         </div>
                     </form>

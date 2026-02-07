@@ -21,7 +21,7 @@
                 <i data-lucide="graduation-cap" class="text-indigo-500"></i>
                 <span>Debrief.me</span>
             </div>
-            
+
             <nav class="space-y-2 flex-1">
                 <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400">
                     <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
@@ -60,6 +60,14 @@
                 </a>
             </header>
 
+
+            @if(session('success'))
+            <div id="success-message"
+                class="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold">
+             {{ session('success') }}
+            </div>
+             @endif
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($classes as $classe)
                 <!-- Class Card -->
@@ -73,7 +81,7 @@
                             <span class="text-sm font-bold text-slate-300">{{ $classe->year }}</span>
                         </div>
                     </div>
-                    
+
                     <h3 class="text-xl font-extrabold mb-1">{{ $classe->name }}</h3>
                     <p class="text-xs text-slate-500 mb-6">Promotion active</p>
 
@@ -81,12 +89,20 @@
                         <div class="flex items-center justify-between text-xs">
                             <span class="text-slate-400">Apprenants</span>
                             <span class="font-bold text-emerald-400">
-                                0/26
+                               {{ $classe->students->count()  }} /26
                             </span>
                         </div>
                         <div class="flex items-center justify-between text-xs">
                             <span class="text-slate-400">Formateur principal</span>
-                            <span class="text-indigo-400 font-medium">Non assigné</span>
+                            <span class="text-indigo-400 font-medium">
+
+                            @if($classe->primaryTeacher)
+                              {{ $classe->primaryTeacher->first_name }} {{ $classe->primaryTeacher->last_name }}
+                             @else
+                              Non Assigné
+                             @endif
+
+                            </span>
                         </div>
                     </div>
 

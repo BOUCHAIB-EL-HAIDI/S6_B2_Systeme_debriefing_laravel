@@ -21,7 +21,7 @@
                 <i data-lucide="graduation-cap" class="text-indigo-500"></i>
                 <span>Debrief.me</span>
             </div>
-            
+
             <nav class="space-y-2 flex-1">
                 <a href="/admin/dashboard" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400">
                     <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
@@ -60,6 +60,17 @@
                 </header>
 
                 <div class="glass p-8 rounded-[2.5rem] shadow-2xl">
+                    @if ($errors->any())
+
+                    <div class="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 font-bold">
+                       <ul class="list-disc ml-5 text-sm">
+                        @foreach ($errors->all() as $error)
+
+                           <li>{{  $error  }} </li>
+                        @endforeach
+                       </ul>
+                    </div>
+                    @endif
                     <form action="{{ route('admin.classes.update', $classe->id) }}" method="POST" class="space-y-6">
                         @csrf
                         @method('PUT')
@@ -72,7 +83,7 @@
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Année</label>
                             <input type="number" name="year" value="{{ $classe->year }}" required min="2000" max="2100"
-                                   class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600">     
+                                   class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600">
                         </div>
 
                         <div class="pt-6">

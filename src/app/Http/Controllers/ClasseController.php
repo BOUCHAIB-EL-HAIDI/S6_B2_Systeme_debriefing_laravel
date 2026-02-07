@@ -13,7 +13,8 @@ class ClasseController extends Controller
     public function index()
     {
         $classes = Classe::all();
-        return view('admin.classes', compact('classes'));
+        
+        return view('admin.classes.classes', compact('classes'));
     }
 
     /**
@@ -30,7 +31,7 @@ class ClasseController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:100',
+            'name' => 'required|string|max:100|unique:classes,name',
             'year' => 'required|integer|min:2000|max:2100',
         ]);
 
@@ -54,7 +55,7 @@ class ClasseController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required|string|max:100',
+            'name' => 'required|string|max:100|unique:classes,name' . $id,
             'year' => 'required|integer|min:2000|max:2100',
         ]);
 
