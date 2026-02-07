@@ -89,12 +89,20 @@
                         <div class="flex items-center justify-between text-xs">
                             <span class="text-slate-400">Apprenants</span>
                             <span class="font-bold text-emerald-400">
-                                0/26
+                               {{ $classe->students->count()  }} /26
                             </span>
                         </div>
                         <div class="flex items-center justify-between text-xs">
                             <span class="text-slate-400">Formateur principal</span>
-                            <span class="text-indigo-400 font-medium">Non assigné</span>
+                            <span class="text-indigo-400 font-medium">
+
+                            @if($classe->primaryTeacher)
+                              {{ $classe->primaryTeacher->first_name }} {{ $classe->primaryTeacher->last_name }}
+                             @else
+                              Non Assigné
+                             @endif
+
+                            </span>
                         </div>
                     </div>
 

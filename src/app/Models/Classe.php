@@ -20,7 +20,7 @@ class Classe extends Model
 
     public function students()
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(User::class)->students();
     }
 
     public function teachers()
@@ -34,7 +34,11 @@ class Classe extends Model
     }
 
     public function sprints()
-    {
+       {
         return $this->hasMany(Sprint::class);
-    }
+      }
+        public function primaryTeacher()
+       {
+        return $this->hasOne(User::class, 'classe_id')->teachers();
+       }
 }

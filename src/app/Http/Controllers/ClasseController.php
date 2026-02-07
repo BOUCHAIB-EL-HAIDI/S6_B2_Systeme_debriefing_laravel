@@ -13,7 +13,7 @@ class ClasseController extends Controller
     public function index()
     {
         $classes = Classe::all();
-
+        
         return view('admin.classes.classes', compact('classes'));
     }
 
