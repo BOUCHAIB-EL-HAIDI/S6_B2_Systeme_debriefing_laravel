@@ -99,25 +99,26 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-white/5">
-                        <tr class="hover:bg-white/5 transition-colors group">
+                      @foreach($users as $user)
+                            <tr class="hover:bg-white/5 transition-colors group">
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
                                     <div class="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold">
-                                        J
+                                        {{   strtoupper(substr($user->first_name , 0 , 1))     }}
                                     </div>
                                     <div>
-                                        <p class="text-sm font-bold">John Doe</p>
-                                        <p class="text-xs text-slate-500">john@exemple.com</p>
+                                        <p class="text-sm font-bold"> {{  $user['first_name']     }}   {{  $user['last_name']     }} </p>
+                                        <p class="text-xs text-slate-500">{{  $user['email']     }}</p>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
                                 <span class="px-2 py-1 rounded-md text-[10px] font-bold uppercase bg-emerald-500/20 text-emerald-400">
-                                    STUDENT
+                                    {{  $user['role']     }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-sm text-slate-400">
-                                WEB-2024-A
+                                {{ $user->classe->name ?? '-' }}
                             </td>
                             <td class="px-6 py-4">
                                 <span class="flex items-center gap-2 text-xs text-emerald-400">
@@ -127,14 +128,34 @@
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button class="p-2 hover:bg-indigo-500/20 text-indigo-400 rounded-lg transition-colors"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+
+
+
+                                    <a href="{{ route('admin.users.edit' , $user['id'])  }}"
+                                     class="p-2 hover:bg-indigo-500/20 text-indigo-400 rounded-lg transition-colors">
+                                     <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                    </a>
+
+
+
+
+
+
                                     <button class="p-2 hover:bg-rose-500/20 text-rose-400 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                                 </div>
                             </td>
                         </tr>
+
+
+
+                      @endforeach
                     </tbody>
+
                 </table>
             </div>
+            <div class="mt-6">
+             {{ $users->links() }}
+              </div>
         </main>
     </div>
 

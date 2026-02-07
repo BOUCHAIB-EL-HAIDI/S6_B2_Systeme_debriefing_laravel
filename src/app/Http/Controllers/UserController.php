@@ -5,11 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Classe;
+use Illuminate\Support\Facades\Hash;
+
 class UserController extends Controller
 {
      public function showUsers(){
 
-     $users = User::all();
+    //  $users = User::where('role' , '!=' , 'ADMIN')->get();
+
+    $users = User::with('classe')  // eager load the 'classe' relationship
+    ->where('role', '!=', 'ADMIN')
+    ->paginate(6);
+
      return view('admin.users.showusers' , compact('users'));
 
      }
@@ -68,6 +75,48 @@ class UserController extends Controller
 
      }
 
+
+     public function edit($id)
+     {
+
+      $usedClassIds = User::Teachers()->whereNotNull('classe_id')->pluck('classe_id');
+      $unassignedClasses = Classe::whereNotIn('id' , $usedClassIds)->get();
+      $allClasses =Classe::all();
+
+      $user = User::findOrFail($id);
+      return view('admin.users.edit', compact('user','unassignedClasses','allClasses' ) );
+
+     }
+
+     public function update(Request $request , $id)
+      {
+        $validated = $request->validate([
+
+        'first_name' =>'required|string|max:30',
+        'last_name' =>'required|string|max:30',
+        'email' =>'required|email|unique:users,email,' . $id,
+        'password'=>'required|min:6',
+
+
+     ]);
+
+
+      $user = User::findOrFail($id);
+
+      $user->first_name = $validated['first_name'];
+      $user->last_name = $validated['last_name'];
+      $user->email = $validated['email'];
+      $user->password = Hash::make($validated['password']);
+
+     $user->save();
+
+     return redirect()->route('admin.users.showusers')
+                     ->with('success', 'Utilisateur mis à jour avec succès.');
+
+
+
+
+      }
 
 
 

@@ -20,7 +20,7 @@
                 <i data-lucide="graduation-cap" class="text-indigo-500"></i>
                 <span>Debrief.me</span>
             </div>
-            
+
             <nav class="space-y-2 flex-1">
                 <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400">
                     <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
@@ -49,7 +49,7 @@
         <main class="flex-1 ml-64 p-8 flex justify-center">
             <div class="w-full max-w-2xl">
                 <header class="mb-10 flex items-center gap-4">
-                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all">
+                    <a href="/admin/users" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all">
                         <i data-lucide="chevron-left" class="w-5 h-5"></i>
                     </a>
                     <div>
@@ -60,17 +60,34 @@
 
 
                 <div class="glass p-8 rounded-[2.5rem] shadow-2xl">
-                    <form action="#" method="POST" class="space-y-6">
+
+                   @if ($errors->any())
+
+                    <div class="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 font-bold">
+                       <ul class="list-disc ml-5 text-sm">
+                        @foreach ($errors->all() as $error)
+
+                           <li>{{  $error  }} </li>
+                        @endforeach
+                       </ul>
+                    </div>
+                    @endif
+
+                    <form action="{{ route('admin.users.update', $user->id)  }}" method="POST" class="space-y-6">
+
+                        @csrf
+                        @method('PUT')
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Prénom</label>
-                                <input type="text" name="first_name" required 
+                                <input type="text" name="first_name" value ="{{ old('first_name' , $user->first_name) }}" required
                                        placeholder="ex : bouchaib"
                                        class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Nom</label>
-                                <input type="text" name="last_name" required 
+                                <input type="text" name="last_name" value ="{{ old('last_name' , $user->last_name) }}" required
                                        placeholder="ex : El Haidi"
                                        class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600">
                             </div>
@@ -78,54 +95,29 @@
 
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Email</label>
-                            <input type="email" name="email" required 
+                            <input type="email" name="email" value ="{{ old('email' , $user->email) }}" required
                                    placeholder="saad@debrief.me"
                                    class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Mot de passe</label>
-                            <input type="password" name="password" required 
+                            <input type="password" name="password" required
                                    placeholder="••••••••"
                                    class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Rôle</label>
-                            <select id="roleSelect" name="role" required 
-                                    class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-slate-300">
-                                <option value="STUDENT">Apprenant</option>
-                                <option value="TEACHER">Formateur</option>
-                                <option value="ADMIN">Administrateur</option>
+                            <select id="roleSelect" name="role" value="{{  $user->role  }}" disabled
+                            class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-slate-300">
+                                <option value="STUDENT" {{ $user->role === 'STUDENT' ? 'selected' : '' }}>Apprenant</option>
+                                <option value="TEACHER" {{ $user->role === 'TEACHER' ? 'selected' : '' }}>Formateur</option>
+                                <option value="ADMIN" {{ $user->role === 'ADMIN' ? 'selected' : '' }}>Administrateur</option>
                             </select>
                         </div>
 
-                        <div id="classField">
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1" id="classLabel">Classe</label>
-                            
-                            <!-- Student Select -->
-                            <select name="classe_id" id="studentClassSelect"
-                                    class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-slate-300">
-                                <option value="">Choisir une classe...</option>
-                                <option value="1">WEB-2024-A (2024)</option>
-                            </select>
-
-                            <!-- Teacher (Available Only) Select -->
-                            <select name="classe_id" id="teacherClassSelect" class="hidden w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-slate-300">
-                                <option value="">Choisir une classe disponible...</option>
-                                <option value="1">WEB-2024-A (2024)</option>
-                            </select>
-                        </div>
-
-                        <div id="backupClassesField" class="hidden">
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Classes de renfort (Backup)</label>
-                            <select name="backup_classes[]" multiple size="4"
-                                    class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-slate-300 scrollbar-thin scrollbar-thumb-indigo-500">
-                                <option value="1">WEB-2024-A (2024)</option>
-                            </select>
-                            <p class="text-[10px] text-slate-500 mt-2 ml-1 italic">Maintenez Ctrl (ou Cmd) pour sélectionner plusieurs classes.</p>
-                        </div>
-
+                      
                         <div class="pt-6">
                             <button type="submit" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white py-4 rounded-2xl font-bold transition-all shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2">
                                 <i data-lucide="user-plus" class="w-5 h-5"></i>
@@ -153,7 +145,7 @@
             if (role === 'STUDENT' || role === 'TEACHER') {
                 classField.classList.remove('hidden');
                 classLabel.innerText = role === 'TEACHER' ? 'Classe Principale (Disponible)' : 'Classe';
-                
+
                 if (role === 'TEACHER') {
                     backupField.classList.remove('hidden');
                     teacherSelect.classList.remove('hidden');
