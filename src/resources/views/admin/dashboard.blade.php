@@ -23,7 +23,7 @@
             </div>
 
             <nav class="space-y-2 flex-1">
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl text-white bg-indigo-500 shadow-lg shadow-indigo-500/20">
+                <a href="/admin/dashboard" class="flex items-center gap-3 p-3 rounded-xl text-white bg-indigo-500 shadow-lg shadow-indigo-500/20">
                     <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
                 </a>
                 <a href="/admin/users" class="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all text-slate-400 hover:text-white">
@@ -32,16 +32,16 @@
                 <a href="/admin/classes" class="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all text-slate-400 hover:text-white">
                     <i data-lucide="book-open"></i> <span>Classes</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all text-slate-400 hover:text-white">
-                    <i data-lucide="target"></i> <span>Compétences</span>
-                </a>
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all text-slate-400 hover:text-white">
+                <a href="{{ route('admin.sprints.showandcreate') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all text-slate-400 hover:text-white">
                     <i data-lucide="layers"></i> <span>Sprints</span>
+                </a>
+                <a href="{{ route('admin.competences.index') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all text-slate-400 hover:text-white">
+                    <i data-lucide="target"></i> <span>Compétences</span>
                 </a>
             </nav>
 
             <div class="pt-6 border-t border-white/10">
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl text-rose-400 hover:bg-rose-500/10 transition-all">
+                <a href="logout" class="flex items-center gap-3 p-3 rounded-xl text-rose-400 hover:bg-rose-500/10 transition-all">
                     <i data-lucide="log-out"></i> <span>Déconnexion</span>
                 </a>
             </div>
@@ -72,28 +72,35 @@
                         <div class="p-3 bg-indigo-500/10 rounded-xl text-indigo-400"><i data-lucide="users"></i></div>
                     </div>
                     <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Total Apprenants</p>
-                    <h2 class="text-3xl font-extrabold text-white">0</h2>
+                    <h2 class="text-3xl font-extrabold text-white">{{ $stats['students_count'] }}</h2>
                 </div>
                 <div class="glass p-6 rounded-3xl group hover:border-emerald-500/50 transition-all">
                     <div class="flex justify-between items-start mb-4">
                         <div class="p-3 bg-emerald-500/10 rounded-xl text-emerald-400"><i data-lucide="user-check"></i></div>
                     </div>
                     <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Formateurs</p>
-                    <h2 class="text-3xl font-extrabold text-white">0</h2>
+                    <h2 class="text-3xl font-extrabold text-white">{{ $stats['teachers_count'] }}</h2>
                 </div>
                 <div class="glass p-6 rounded-3xl group hover:border-rose-500/50 transition-all">
                     <div class="flex justify-between items-start mb-4">
                         <div class="p-3 bg-rose-500/10 rounded-xl text-rose-400"><i data-lucide="book-open"></i></div>
                     </div>
                     <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Classes</p>
-                    <h2 class="text-3xl font-extrabold text-white">0</h2>
+                    <h2 class="text-3xl font-extrabold text-white">{{ $stats['classes_count'] }}</h2>
                 </div>
                 <div class="glass p-6 rounded-3xl group hover:border-indigo-300/50 transition-all">
                     <div class="flex justify-between items-start mb-4">
                         <div class="p-3 bg-slate-500/10 rounded-xl text-slate-400"><i data-lucide="layers"></i></div>
                     </div>
                     <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Sprints Totaux</p>
-                    <h2 class="text-3xl font-extrabold text-white">0</h2>
+                    <h2 class="text-3xl font-extrabold text-white">{{ $stats['sprints_count'] }}</h2>
+                </div>
+                <div class="glass p-6 rounded-3xl group hover:border-orange-500/50 transition-all col-span-full md:col-span-1">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-3 bg-orange-500/10 rounded-xl text-orange-400"><i data-lucide="target"></i></div>
+                    </div>
+                    <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Compétences</p>
+                    <h2 class="text-3xl font-extrabold text-white">{{ $stats['competences_count'] }}</h2>
                 </div>
             </div>
 
