@@ -9,9 +9,7 @@ use App\Http\Controllers\SprintsController;
 use App\Http\Controllers\CompetenceController;
 use App\Http\Controllers\TeacherController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [AuthController::class, 'showLogin'])->name('home');
 
 Route::get('/login' ,[AuthController::class , 'showLogin'] )->name('login');
 Route::post('/login' , [AuthController::class, 'submitLogin'])->name('auth.submitLogin');
