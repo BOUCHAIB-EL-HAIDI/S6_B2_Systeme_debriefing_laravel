@@ -13,42 +13,52 @@ Route::get('/', function () {
 });
 
 Route::get('/login' ,[AuthController::class , 'showLogin'] )->name('login');
-Route::post('/login' , [AuthController::class , 'submitLogin'])->name('auth.submitLogin');
-Route::get('/admin/dashboard' ,[AdminController::class , 'showDashboard'] )->name('admin.dashboard');
-// Route::get('/admin/users' ,[AdminController::class , 'showUsers'] )->name('admin.users');
-// Route::get('/admin/users/create' ,[AdminController::class , 'createUser'] )->name('admin.createuser');
+Route::post('/login' , [AuthController::class, 'submitLogin'])->name('auth.submitLogin');
 
-// Class CRUD Routes
-Route::get('/admin/classes', [ClasseController::class, 'index'])->name('admin.classes.index');
-Route::get('/admin/classes/create', [ClasseController::class, 'create'])->name('admin.classes.create');
-Route::post('/admin/classes', [ClasseController::class, 'store'])->name('admin.classes.store');
-Route::get('/admin/classes/{id}/edit', [ClasseController::class, 'edit'])->name('admin.classes.edit');
-Route::put('/admin/classes/{id}', [ClasseController::class, 'update'])->name('admin.classes.update');
-Route::delete('/admin/classes/{id}', [ClasseController::class, 'destroy'])->name('admin.classes.destroy');
+Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'showDashboard'])->name('admin.dashboard');
 
+    // Class CRUD Routes
+    Route::get('/classes', [ClasseController::class, 'index'])->name('admin.classes.index');
+    Route::get('/classes/create', [ClasseController::class, 'create'])->name('admin.classes.create');
+    Route::post('/classes', [ClasseController::class, 'store'])->name('admin.classes.store');
+    Route::get('/classes/{id}/edit', [ClasseController::class, 'edit'])->name('admin.classes.edit');
+    Route::put('/classes/{id}', [ClasseController::class, 'update'])->name('admin.classes.update');
+    Route::delete('/classes/{id}', [ClasseController::class, 'destroy'])->name('admin.classes.destroy');
 
-//user routes
-Route::get('/admin/users', [UserController::class, 'showUsers'])->name('admin.users.showusers');
-Route::get('/admin/users/create' ,[UserController::class , 'create'] )->name('admin.users.create');
-Route::post('/admin/users/create', [UserController::class, 'store'])->name('admin.users.store');
-Route::get('/admin/users/{id}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
-Route::put('/admin/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
-Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+    // User CRUD Routes
+    Route::get('/users', [UserController::class, 'showUsers'])->name('admin.users.showusers');
+    Route::get('/users/create', [UserController::class, 'create'])->name('admin.users.create');
+    Route::post('/users/create', [UserController::class, 'store'])->name('admin.users.store');
+    Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
+    Route::put('/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
 
+    // Sprint CRUD Routes
+    Route::get('/sprints', [SprintsController::class, 'showAndCreate'])->name('admin.sprints.showandcreate');
+    Route::post('/sprints', [SprintsController::class, 'store'])->name('admin.sprints.store');
+    Route::get('/sprints/{id}/edit', [SprintsController::class, 'edit'])->name('admin.sprints.edit');
+    Route::put('/sprints/{id}', [SprintsController::class, 'update'])->name('admin.sprints.update');
+    Route::delete('/sprints/{id}', [SprintsController::class, 'destroy'])->name('admin.sprints.destroy');
 
-//sprints routes
+    // Competence CRUD Routes
+    Route::get('/competences', [CompetenceController::class, 'index'])->name('admin.competences.index');
+    Route::get('/competences/create', [CompetenceController::class, 'create'])->name('admin.competences.create');
+    Route::post('/competences', [CompetenceController::class, 'store'])->name('admin.competences.store');
+    Route::get('/competences/{code}/edit', [CompetenceController::class, 'edit'])->name('admin.competences.edit');
+    Route::put('/competences/{code}', [CompetenceController::class, 'update'])->name('admin.competences.update');
+    Route::delete('/competences/{code}', [CompetenceController::class, 'destroy'])->name('admin.competences.destroy');
+});
 
-Route::get('/admin/sprints', [SprintsController::class, 'showAndCreate'])->name('admin.sprints.showandcreate');
-Route::post('/admin/sprints', [SprintsController::class, 'store'])->name('admin.sprints.store');
-Route::get('/admin/sprints/{id}/edit', [SprintsController::class, 'edit'])->name('admin.sprints.edit');
-Route::put('/admin/sprints/{id}', [SprintsController::class, 'update'])->name('admin.sprints.update');
-Route::delete('/admin/sprints/{id}', [SprintsController::class, 'destroy'])->name('admin.sprints.destroy');
+Route::middleware(['auth', 'role:TEACHER'])->prefix('teacher')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('teacher.dashboard');
+    })->name('teacher.dashboard');
+});
 
-// Competence CRUD Routes
-Route::get('/admin/competences', [CompetenceController::class, 'index'])->name('admin.competences.index');
-Route::get('/admin/competences/create', [CompetenceController::class, 'create'])->name('admin.competences.create');
-Route::post('/admin/competences', [CompetenceController::class, 'store'])->name('admin.competences.store');
-Route::get('/admin/competences/{code}/edit', [CompetenceController::class, 'edit'])->name('admin.competences.edit');
-Route::put('/admin/competences/{code}', [CompetenceController::class, 'update'])->name('admin.competences.update');
-Route::delete('/admin/competences/{code}', [CompetenceController::class, 'destroy'])->name('admin.competences.destroy');
+Route::middleware(['auth', 'role:STUDENT'])->prefix('student')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('student.dashboard');
+    })->name('student.dashboard');
+});
 
