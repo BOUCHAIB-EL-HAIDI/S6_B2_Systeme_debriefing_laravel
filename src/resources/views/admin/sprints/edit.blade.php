@@ -36,7 +36,16 @@
                 <a href="{{ route('admin.sprints.showandcreate') }}" class="flex items-center gap-3 p-3 rounded-xl text-white bg-indigo-500 shadow-lg shadow-indigo-500/20">
                     <i data-lucide="layers"></i> <span>Sprints</span>
                 </a>
+                <a href="{{ route('admin.competences.index') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400 hover:text-white">
+                    <i data-lucide="target"></i> <span>Compétences</span>
+                </a>
             </nav>
+
+            <div class="pt-6 border-t border-white/10">
+                <a href="{{ route('auth.logout') }}" class="flex items-center gap-3 p-3 rounded-xl text-rose-400 hover:bg-rose-500/10 transition-all">
+                    <i data-lucide="log-out"></i> <span>Déconnexion</span>
+                </a>
+            </div>
         </aside>
 
         <!-- Main Content -->

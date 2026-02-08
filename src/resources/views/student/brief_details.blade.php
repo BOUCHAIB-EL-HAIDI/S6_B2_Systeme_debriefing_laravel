@@ -23,19 +23,19 @@
             </div>
             
             <nav class="space-y-2 flex-1">
-                <a href="{{ $baseUrl }}/student/dashboard" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400">
+                <a href="{{ route('student.dashboard') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400">
                     <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
                 </a>
-                <a href="{{ $baseUrl }}/student/briefs" class="flex items-center gap-3 p-3 rounded-xl text-white bg-indigo-500 shadow-lg shadow-indigo-500/20">
+                <a href="#" class="flex items-center gap-3 p-3 rounded-xl text-white bg-indigo-500 shadow-lg shadow-indigo-500/20">
                     <i data-lucide="file-text"></i> <span>Mes Briefs</span>
                 </a>
-                <a href="{{ $baseUrl }}/student/progression" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400">
+                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400">
                     <i data-lucide="award"></i> <span>Mon Parcours</span>
                 </a>
             </nav>
-
+            
             <div class="pt-6 border-t border-white/10">
-                <a href="{{ $baseUrl }}/logout" class="flex items-center gap-3 p-3 rounded-xl text-rose-400 hover:bg-rose-500/10 transition-all">
+                <a href="{{ route('auth.logout') }}" class="flex items-center gap-3 p-3 rounded-xl text-rose-400 hover:bg-rose-500/10 transition-all">
                     <i data-lucide="log-out"></i> <span>Déconnexion</span>
                 </a>
             </div>
@@ -44,7 +44,7 @@
         <!-- Main Content -->
         <main class="flex-1 ml-64 p-8">
             <div class="max-w-4xl mx-auto">
-                <a href="{{ $baseUrl }}/student/briefs" class="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-6">
+                <a href="#" class="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-6">
                     <i data-lucide="arrow-left" class="w-4 h-4"></i> Retour aux briefs
                 </a>
 
