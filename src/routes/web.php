@@ -40,6 +40,9 @@ Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])->name('ad
 
 Route::get('/admin/sprints', [SprintsController::class, 'showAndCreate'])->name('admin.sprints.showandcreate');
 Route::post('/admin/sprints', [SprintsController::class, 'store'])->name('admin.sprints.store');
+Route::get('/admin/sprints/{id}/edit', [SprintsController::class, 'edit'])->name('admin.sprints.edit');
+Route::put('/admin/sprints/{id}', [SprintsController::class, 'update'])->name('admin.sprints.update');
+Route::delete('/admin/sprints/{id}', [SprintsController::class, 'destroy'])->name('admin.sprints.destroy');
 
 // Competence CRUD Routes
 Route::get('/admin/competences', [CompetenceController::class, 'index'])->name('admin.competences.index');
