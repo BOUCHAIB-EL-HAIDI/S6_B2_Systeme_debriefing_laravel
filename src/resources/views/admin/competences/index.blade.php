@@ -20,24 +20,29 @@
                 <i data-lucide="graduation-cap" class="text-indigo-500"></i>
                 <span>Debrief.me</span>
             </div>
-            <nav class="space-y-2 flex-1">
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400 hover:text-white">
-                    <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
-                </a>
-                <a href="{{ route('admin.users.showusers') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400 hover:text-white">
-                    <i data-lucide="users"></i> <span>Utilisateurs</span>
-                </a>
-                <a href="{{ route('admin.classes.index') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400 hover:text-white">
-                    <i data-lucide="book-open"></i> <span>Classes</span>
-                </a>
-                <a href="{{ route('admin.competences.index') }}" class="flex items-center gap-3 p-3 rounded-xl text-white bg-indigo-500 shadow-lg shadow-indigo-500/20">
-                    <i data-lucide="target"></i> <span>Compétences</span>
-                </a>
-                <a href="{{ route('admin.sprints.showandcreate') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400 hover:text-white">
-                    <i data-lucide="layers"></i> <span>Sprints</span>
-                </a>
-            </nav>
-        </aside>
+    <nav class="space-y-2 flex-1">
+        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400 hover:text-white">
+            <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
+        </a>
+        <a href="{{ route('admin.users.showusers') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400 hover:text-white">
+            <i data-lucide="users"></i> <span>Utilisateurs</span>
+        </a>
+        <a href="{{ route('admin.classes.index') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400 hover:text-white">
+            <i data-lucide="book-open"></i> <span>Classes</span>
+        </a>
+        <a href="{{ route('admin.competences.index') }}" class="flex items-center gap-3 p-3 rounded-xl text-white bg-indigo-500 shadow-lg shadow-indigo-500/20">
+            <i data-lucide="target"></i> <span>Compétences</span>
+        </a>
+        <a href="{{ route('admin.sprints.showandcreate') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400 hover:text-white">
+            <i data-lucide="layers"></i> <span>Sprints</span>
+        </a>
+    </nav>
+    <div class="pt-6 border-t border-white/10">
+        <a href="{{ route('auth.logout') }}" class="flex items-center gap-3 p-3 rounded-xl text-rose-400 hover:bg-rose-500/10 transition-all">
+            <i data-lucide="log-out"></i> <span>Déconnexion</span>
+        </a>
+    </div>
+</aside>
 
         <!-- Main Content -->
         <main class="flex-1 ml-64 p-8">
