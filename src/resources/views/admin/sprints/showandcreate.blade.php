@@ -16,32 +16,32 @@
 
     <div class="flex min-h-screen">
         <!-- Sidebar -->
-        <aside class="w-64 glass border-r border-white/10 p-6 flex flex-col fixed h-full">
+       <aside class="w-64 glass border-r border-white/10 p-6 flex flex-col fixed h-full">
             <div class="flex items-center gap-3 text-2xl font-extrabold mb-10">
                 <i data-lucide="graduation-cap" class="text-indigo-500"></i>
                 <span>Debrief.me</span>
             </div>
-            
+
             <nav class="space-y-2 flex-1">
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400">
+                <a href="/admin/dashboard" class="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all text-slate-400 hover:text-white">
                     <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400">
+                <a href="/admin/users" class="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all text-slate-400 hover:text-white">
                     <i data-lucide="users"></i> <span>Utilisateurs</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400">
+                <a href="/admin/classes" class="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all text-slate-400 hover:text-white">
                     <i data-lucide="book-open"></i> <span>Classes</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400">
+                <a href="/admin/competences" class="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all text-slate-400 hover:text-white">
                     <i data-lucide="target"></i> <span>Compétences</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl text-white bg-indigo-500 shadow-lg shadow-indigo-500/20">
+                <a href="/admin/sprints" class="flex items-center gap-3 p-3 rounded-xl text-white bg-indigo-500 shadow-lg shadow-indigo-500/20">
                     <i data-lucide="layers"></i> <span>Sprints</span>
                 </a>
             </nav>
 
             <div class="pt-6 border-t border-white/10">
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl text-rose-400 hover:bg-rose-500/10 transition-all">
+                <a href="logout" class="flex items-center gap-3 p-3 rounded-xl text-rose-400 hover:bg-rose-500/10 transition-all">
                     <i data-lucide="log-out"></i> <span>Déconnexion</span>
                 </a>
             </div>
@@ -55,6 +55,12 @@
                     <p class="text-slate-400 mt-1">Créez et assignez des sprints aux classes</p>
                 </div>
             </header>
+             @if(session('success'))
+            <div id="success-message"
+                class="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold">
+             {{ session('success') }}
+            </div>
+             @endif
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Add Sprint Form -->
@@ -62,21 +68,35 @@
                     <div class="glass p-8 rounded-[2.5rem] sticky top-8">
                         <h3 class="text-xl font-bold mb-6">Nouveau Sprint</h3>
 
-                        <form action="#" method="POST" class="space-y-4">
+                    @if ($errors->any())
+
+                    <div class="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 font-bold">
+                       <ul class="list-disc ml-5 text-sm">
+                        @foreach ($errors->all() as $error)
+
+                           <li>{{  $error  }} </li>
+                        @endforeach
+                       </ul>
+                    </div>
+                    @endif
+
+                        <form action="{{ route('admin.sprints.store')   }}" method="POST" class="space-y-4">
+
+                            @csrf
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Nom du Sprint</label>
-                                <input type="text" name="name" required placeholder="ex: Sprint 1 - PHP" 
+                                <input type="text" name="name" required placeholder="ex: Sprint 1 - PHP"
                                        class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600">
                             </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Durée (jours)</label>
-                                    <input type="number" name="duration" required placeholder="7" 
+                                    <input type="number" name="duration" required placeholder="7"
                                            class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Ordre</label>
-                                    <input type="number" name="order" required placeholder="1" 
+                                    <input type="number" name="order" required placeholder="1"
                                            class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
                                 </div>
                             </div>
@@ -97,23 +117,42 @@
                     <div class="glass p-8 rounded-[2.5rem]">
                         <div class="flex justify-between items-center mb-6">
                             <h3 class="text-xl font-bold">Sprints Assignés</h3>
-                            <span class="text-xs text-slate-500 font-bold uppercase tracking-widest">0 Total</span>
+                            <span class="text-xs text-slate-500 font-bold uppercase tracking-widest">{{ $sprints->count() }} Total</span>
                         </div>
 
                         <div class="space-y-3">
-                            <div class="p-4 bg-white/5 rounded-2xl border border-white/5 flex items-center justify-between group hover:border-indigo-500/30 transition-all">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center font-bold text-sm">S1</div>
-                                    <div>
-                                        <h4 class="text-sm font-bold text-white">Sprint 1 - PHP</h4>
-                                        <div class="flex gap-3 mt-1">
-                                            <p class="text-[10px] text-slate-500 flex items-center gap-1">
-                                                <i data-lucide="calendar" class="w-3 h-3"></i> 5 jours
-                                            </p>
+                            @forelse($sprints as $sprint)
+                                <div class="p-4 bg-white/5 rounded-2xl border border-white/5 flex items-center justify-between group hover:border-indigo-500/30 transition-all">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center font-bold text-sm">{{ $sprint->order }}</div>
+                                        <div>
+                                            <h4 class="text-sm font-bold text-white">{{ $sprint->name }}</h4>
+                                            <div class="flex gap-3 mt-1">
+                                                <p class="text-[10px] text-slate-500 flex items-center gap-1">
+                                                    <i data-lucide="calendar" class="w-3 h-3"></i> {{ $sprint->duration }} jours
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
+                                    <div class="flex gap-2">
+                                        <a href="{{ route('admin.sprints.edit', $sprint->id) }}" class="p-2 bg-indigo-500/10 text-indigo-400 rounded-lg hover:bg-indigo-500 hover:text-white transition-all">
+                                            <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                        </a>
+                                        <form action="{{ route('admin.sprints.destroy', $sprint->id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce sprint ?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="p-2 bg-rose-500/10 text-rose-400 rounded-lg hover:bg-rose-500 hover:text-white transition-all">
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
-                            </div>
+                            @empty
+                                <div class="text-center py-8 text-slate-500 italic">
+                                    <i data-lucide="info" class="w-8 h-8 mx-auto mb-2 opacity-20"></i>
+                                    Aucun sprint créé pour le moment.
+                                </div>
+                            @endforelse
                         </div>
                     </div>
                 </div>
