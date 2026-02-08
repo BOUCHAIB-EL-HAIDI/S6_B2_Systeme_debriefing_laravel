@@ -15,32 +15,32 @@
 <body class="bg-[#0f172a] text-slate-100 min-h-screen">
 
     <div class="flex min-h-screen">
-        <aside class="w-64 glass border-r border-white/10 p-6 flex flex-col fixed h-full">
+<aside class="w-64 glass border-r border-white/10 p-6 flex flex-col fixed h-full">
             <div class="flex items-center gap-3 text-2xl font-extrabold mb-10">
                 <i data-lucide="graduation-cap" class="text-indigo-500"></i>
                 <span>Debrief.me</span>
             </div>
 
             <nav class="space-y-2 flex-1">
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400">
+                <a href="/admin/dashboard" class="flex items-center gap-3 p-3 rounded-xl text-white bg-indigo-500 shadow-lg shadow-indigo-500/20">
                     <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl text-white bg-indigo-500 shadow-lg shadow-indigo-500/20">
+                <a href="/admin/users" class="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all text-slate-400 hover:text-white">
                     <i data-lucide="users"></i> <span>Utilisateurs</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400">
+                <a href="/admin/classes" class="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all text-slate-400 hover:text-white">
                     <i data-lucide="book-open"></i> <span>Classes</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400">
+                <a href="/admin/competences" class="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all text-slate-400 hover:text-white">
                     <i data-lucide="target"></i> <span>Compétences</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400">
+                <a href="/admin/sprints" class="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all text-slate-400 hover:text-white">
                     <i data-lucide="layers"></i> <span>Sprints</span>
                 </a>
             </nav>
 
             <div class="pt-6 border-t border-white/10">
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl text-rose-400 hover:bg-rose-500/10 transition-all">
+                <a href="logout" class="flex items-center gap-3 p-3 rounded-xl text-rose-400 hover:bg-rose-500/10 transition-all">
                     <i data-lucide="log-out"></i> <span>Déconnexion</span>
                 </a>
             </div>

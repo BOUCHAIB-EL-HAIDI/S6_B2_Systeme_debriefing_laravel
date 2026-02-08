@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('name' , 100);
             $table->integer('duration');
              $table->integer('order');
-             $table->foreignId('classe_id')->constrained('classes')->cascadeOnDelete();
-             $table->timestamp('created_at')->useCurrent();
+            //  $table->foreignId('classe_id')->constrained('classes')->cascadeOnDelete();
+             $table->timestamps();
         });
     }
 

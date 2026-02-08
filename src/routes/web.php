@@ -7,6 +7,7 @@ use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SprintsController;
 use App\Http\Controllers\CompetenceController;
+use App\Http\Controllers\TeacherController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -14,6 +15,7 @@ Route::get('/', function () {
 
 Route::get('/login' ,[AuthController::class , 'showLogin'] )->name('login');
 Route::post('/login' , [AuthController::class, 'submitLogin'])->name('auth.submitLogin');
+Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
 Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'showDashboard'])->name('admin.dashboard');
@@ -51,9 +53,12 @@ Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->group(function () {
 });
 
 Route::middleware(['auth', 'role:TEACHER'])->prefix('teacher')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('teacher.dashboard');
-    })->name('teacher.dashboard');
+    Route::get('/dashboard', [TeacherController::class, 'dashboard'])->name('teacher.dashboard');
+    Route::get('/briefs', [TeacherController::class, 'briefs'])->name('teacher.briefs');
+    Route::get('/briefs/create', [TeacherController::class, 'createBrief'])->name('teacher.briefs.create');
+    Route::get('/briefs/{id}', [TeacherController::class, 'briefDetails'])->name('teacher.briefs.details');
+    Route::get('/debriefing', [TeacherController::class, 'debriefing'])->name('teacher.debriefing');
+    Route::get('/progression', [TeacherController::class, 'progression'])->name('teacher.progression');
 });
 
 Route::middleware(['auth', 'role:STUDENT'])->prefix('student')->group(function () {

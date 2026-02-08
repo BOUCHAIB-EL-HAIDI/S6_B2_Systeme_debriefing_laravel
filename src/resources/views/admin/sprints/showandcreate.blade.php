@@ -85,18 +85,18 @@
                             @csrf
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Nom du Sprint</label>
-                                <input type="text" name="name" required placeholder="ex: Sprint 1 - PHP"
+                                <input type="text" name="name" required placeholder="ex: Sprint 1 - PHP" value="{{ old('name') }}"
                                        class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600">
                             </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Durée (jours)</label>
-                                    <input type="number" name="duration" required placeholder="7"
+                                    <input type="number" name="duration" required placeholder="7" value="{{ old('duration') }}"
                                            class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Ordre</label>
-                                    <input type="number" name="order" required placeholder="1"
+                                    <input type="number" name="order" required placeholder="1" value="{{ old('order') }}"
                                            class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
                                 </div>
                             </div>

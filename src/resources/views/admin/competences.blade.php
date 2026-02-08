@@ -21,27 +21,27 @@
                 <i data-lucide="graduation-cap" class="text-indigo-500"></i>
                 <span>Debrief.me</span>
             </div>
-            
+
             <nav class="space-y-2 flex-1">
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400">
+                <a href="/admin/dashboard" class="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all text-slate-400 hover:text-white">
                     <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400">
+                <a href="/admin/users" class="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all text-slate-400 hover:text-white">
                     <i data-lucide="users"></i> <span>Utilisateurs</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400">
+                <a href="/admin/classes" class="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all text-slate-400 hover:text-white">
                     <i data-lucide="book-open"></i> <span>Classes</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl text-white bg-indigo-500 shadow-lg shadow-indigo-500/20">
+                <a href="/admin/competences" class="flex items-center gap-3 p-3 rounded-xl text-white bg-indigo-500 shadow-lg shadow-indigo-500/20">
                     <i data-lucide="target"></i> <span>Compétences</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400">
+                <a href="/admin/sprints" class="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all text-slate-400 hover:text-white">
                     <i data-lucide="layers"></i> <span>Sprints</span>
                 </a>
             </nav>
 
             <div class="pt-6 border-t border-white/10">
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl text-rose-400 hover:bg-rose-500/10 transition-all">
+                <a href="logout" class="flex items-center gap-3 p-3 rounded-xl text-rose-400 hover:bg-rose-500/10 transition-all">
                     <i data-lucide="log-out"></i> <span>Déconnexion</span>
                 </a>
             </div>
@@ -61,11 +61,11 @@
                 <div class="lg:col-span-1">
                     <div class="glass p-8 rounded-[2.5rem] sticky top-8">
                         <h3 class="text-xl font-bold mb-6">Nouvelle Compétence</h3>
-                        
+
                         <form action="#" method="POST" class="space-y-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Code (Format: C1, C2...)</label>
-                                <input type="text" name="code" required placeholder="C1" 
+                                <input type="text" name="code" required placeholder="C1"
                                        class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600">
                             </div>
                             <div>
