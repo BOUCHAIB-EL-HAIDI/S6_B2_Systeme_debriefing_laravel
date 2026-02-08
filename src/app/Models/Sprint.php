@@ -9,18 +9,18 @@ class Sprint extends Model
 {
     use HasFactory;
 
-    protected $table = 'sprint';
 
+    protected $table = 'sprints';
+       public $timestamps = false;
     protected $fillable = [
         'name',
         'duration',
         'order',
-        'classe_id',
     ];
 
-    public function classe()
+    public function classes()
     {
-        return $this->belongsTo(Classe::class);
+        return $this->belongsToMany(Classe::class, 'classe_sprint', 'sprint_id', 'classe_id')->withTimestamps();
     }
 
     public function briefs()

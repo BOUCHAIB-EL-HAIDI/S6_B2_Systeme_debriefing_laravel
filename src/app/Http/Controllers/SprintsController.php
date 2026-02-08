@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Sprint;
+use App\Models\Classe;
+
 class SprintsController extends Controller
 {
     public function showAndCreate()
@@ -21,13 +23,17 @@ class SprintsController extends Controller
             'order' => 'required|integer|gt:0|unique:sprints,order',
         ]);
 
-        Sprint::create([
+        $sprint = Sprint::create([
             'name' => $validated['name'],
             'duration' => $validated['duration'],
             'order' => $validated['order'],
         ]);
 
-        return redirect()->route('admin.sprints.showandcreate')->with('success', 'Sprint was created successfully');
+        // Auto-attach to all classes
+        $classes = Classe::all();
+        $sprint->classes()->attach($classes);
+
+        return redirect()->route('admin.sprints.showandcreate')->with('success', 'Sprint was created successfully and assigned to all classes');
     }
 
     public function edit($id)

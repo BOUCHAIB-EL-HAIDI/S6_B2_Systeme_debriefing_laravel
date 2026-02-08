@@ -34,9 +34,9 @@ class Classe extends Model
     }
 
     public function sprints()
-       {
-        return $this->hasMany(Sprint::class);
-      }
+    {
+        return $this->belongsToMany(Sprint::class, 'classe_sprint', 'classe_id', 'sprint_id')->withTimestamps();
+    }
         public function primaryTeacher()
        {
         return $this->hasOne(User::class, 'classe_id')->teachers();
