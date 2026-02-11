@@ -45,20 +45,23 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 ml-64 p-8">
-            <div class="max-w-4xl mx-auto">
-                <a href="{{ route('teacher.briefs') }}" class="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-6">
-                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Retour à la liste
-                </a>
-
-                <div class="glass rounded-[2.5rem] p-10 mb-8 border-t border-white/10 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-8 flex gap-3">
-                        @if($brief->is_assigned)
-                            <span class="px-4 py-2 bg-emerald-500/20 text-emerald-400 text-xs font-bold uppercase rounded-full">Assigné</span>
-                        @else
-                            <span class="px-4 py-2 bg-amber-500/20 text-amber-400 text-xs font-bold uppercase rounded-full">Brouillon</span>
-                        @endif
+            <header class="flex justify-between items-center mb-10">
+                <div>
+                    <h1 class="text-3xl font-extrabold">Détails du Brief</h1>
+                    <p class="text-slate-400 mt-1">Gérez le contenu et voyez les rendus</p>
+                </div>
+                <div class="flex items-center gap-6">
+                    <div class="glass px-4 py-2 rounded-2xl flex items-center gap-3">
+                        <div class="text-right">
+                            <p class="text-sm font-bold">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</p>
+                            <p class="text-[10px] text-slate-400 uppercase tracking-wider">{{ Auth::user()->role ?? 'FORMATEUR' }}</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center font-bold text-white uppercase">
+                            {{ substr(Auth::user()->first_name, 0, 1) }}
+                        </div>
                     </div>
+                </div>
+            </header>
 
                     <h1 class="text-4xl font-extrabold mb-2">{{ $brief->title }}</h1>
                     <p class="text-indigo-400 font-bold uppercase tracking-widest text-xs mb-6">
@@ -82,13 +85,45 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Stats Card (Placeholder for now) -->
+                    <!-- Student Deliverables -->
                     <div class="glass p-8 rounded-3xl">
                         <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
-                            <i data-lucide="bar-chart-2" class="text-indigo-400"></i> Statistiques
+                            <i data-lucide="send" class="text-indigo-400"></i> Livrables des Étudiants
                         </h3>
-                        <div class="bg-slate-900/50 p-6 rounded-2xl border border-white/5">
-                            <p class="text-slate-500 text-sm italic">Les taux de rendu seront disponibles une fois les livrables connectés.</p>
+                        <div class="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                            @forelse($deliverables as $del)
+                            <div class="p-4 bg-slate-900/50 rounded-2xl border border-white/5 hover:border-indigo-500/30 transition-all group">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold text-xs uppercase">
+                                            {{ substr($del->student->first_name, 0, 1) }}
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-bold text-slate-200">{{ $del->student->first_name }} {{ $del->student->last_name }}</p>
+                                            <p class="text-[10px] text-slate-500 italic">{{ \Carbon\Carbon::parse($del->submitted_at)->format('d/m à H:i') }}</p>
+                                        </div>
+                                    </div>
+                                    <a href="{{ $del->content }}" target="_blank" class="p-2 bg-white/5 rounded-lg text-slate-400 hover:text-white hover:bg-indigo-500/20 transition-all">
+                                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                                    </a>
+                                </div>
+                                <div class="bg-indigo-500/5 p-3 rounded-xl border border-indigo-500/10 mt-2">
+                                    <p class="text-xs text-slate-400 leading-relaxed italic">
+                                        {{ $del->comment ?: "Aucun commentaire laissé par l'étudiant." }}
+                                    </p>
+                                </div>
+                                <div class="mt-4 flex justify-between items-center">
+                                    <a href="{{ route('teacher.debriefing', ['student' => $del->student_id, 'brief' => $del->brief_id]) }}" class="text-[10px] font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 group/btn">
+                                        Évaluer cet étudiant <i data-lucide="chevron-right" class="w-3 h-3 group-hover/btn:translate-x-1 transition-transform"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            @empty
+                            <div class="bg-slate-900/50 p-8 rounded-2xl border border-white/5 text-center">
+                                <i data-lucide="inbox" class="w-8 h-8 text-slate-600 mx-auto mb-3"></i>
+                                <p class="text-slate-500 text-sm italic">Aucun livrable n'a été soumis pour le moment.</p>
+                            </div>
+                            @endforelse
                         </div>
                     </div>
 

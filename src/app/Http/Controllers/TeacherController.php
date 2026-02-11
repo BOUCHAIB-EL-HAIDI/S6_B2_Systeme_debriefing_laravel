@@ -20,12 +20,25 @@ class TeacherController extends Controller
         $teacher = Auth::user();
         $classes = $teacher->classes()->withCount('students')->get();
         $briefs = $teacher->briefs()->latest()->take(5)->get();
+
+        // Get recent deliverables from any student in any of the teacher's classes
+        $recentDeliverables = Livrable::whereIn('student_id', function($query) use ($teacher) {
+                $query->select('student_id')
+                    ->from('classe_user') // Assuming a pivot table or relationship
+                    ->whereIn('classe_id', $teacher->classes->pluck('id'));
+            })
+            // If the structure is simpler (e.g., student has classe_id)
+            ->orWhereIn('student_id', User::whereIn('classe_id', $teacher->classes->pluck('id'))->pluck('id'))
+            ->with(['student', 'brief'])
+            ->latest('submitted_at')
+            ->take(5)
+            ->get();
         
         $stats = [
             'briefs_count' => $teacher->briefs()->count(),
             'classes_count' => $classes->count(),
         ];
-        return view('teacher.dashboard', compact('stats', 'classes', 'briefs'));
+        return view('teacher.dashboard', compact('stats', 'classes', 'briefs', 'recentDeliverables'));
     }
 
     public function index()
@@ -68,7 +81,12 @@ class TeacherController extends Controller
     public function show($id)
     {
         $brief = Brief::with(['sprint', 'competences'])->findOrFail($id);
-        return view('teacher.brief_details', compact('brief'));
+        $deliverables = Livrable::where('brief_id', $id)
+            ->with('student')
+            ->latest('submitted_at')
+            ->get();
+            
+        return view('teacher.brief_details', compact('brief', 'deliverables'));
     }
 
     public function edit($id)

@@ -15,15 +15,21 @@ class StudentController extends Controller
         $student = Auth::user();
         $classe = $student->classe;
         
-        // Get all briefs assigned to the student's class (via sprints)
+        // Get all briefs assigned to the student's class (via sprints) that have already started
         $briefs = Brief::whereHas('sprint.classes', function($query) use ($classe) {
             $query->where('classes.id', $classe->id);
-        })->latest()->take(3)->get();
+        })
+        ->where('start_date', '<=', now())
+        ->latest()
+        ->take(3)
+        ->get();
 
         $stats = [
             'total_briefs' => Brief::whereHas('sprint.classes', function($query) use ($classe) {
                 $query->where('classes.id', $classe->id);
-            })->count(),
+            })
+            ->where('start_date', '<=', now())
+            ->count(),
             'submitted_livrables' => $student->livrables()->count(),
             'validated_competences' => Debriefing::where('student_id', $student->id)
                 ->with('competences')
@@ -45,7 +51,11 @@ class StudentController extends Controller
 
         $briefs = Brief::whereHas('sprint.classes', function($query) use ($classe) {
             $query->where('classes.id', $classe->id);
-        })->with('sprint')->latest()->paginate(10);
+        })
+        ->where('start_date', '<=', now())
+        ->with('sprint')
+        ->latest()
+        ->paginate(10);
 
         return view('student.briefs', compact('briefs'));
     }
@@ -53,7 +63,12 @@ class StudentController extends Controller
     public function showBrief($id)
     {
         $student = Auth::user();
-        $brief = Brief::with(['competences', 'sprint'])->findOrFail($id);
+        // Allow seeing the brief even if not yet started for direct links? 
+        // Actually, requirement says "brief should be assigned when the start date".
+        // So it should probably 404 if not yet started.
+        $brief = Brief::with(['competences', 'sprint', 'teacher'])
+            ->where('start_date', '<=', now())
+            ->findOrFail($id);
         
         $livrables = Livrable::where('brief_id', $id)
             ->where('student_id', $student->id)
@@ -65,6 +80,13 @@ class StudentController extends Controller
 
     public function storeLivrable(Request $request, $id)
     {
+        $brief = Brief::findOrFail($id);
+
+        // Check if the brief has ended
+        if (now() > $brief->end_date) {
+            return redirect()->back()->with('error', 'Le délai de soumission pour ce brief est expiré.');
+        }
+
         $request->validate([
             'content' => 'required|url',
             'comment' => 'nullable|string|max:500',

@@ -51,11 +51,22 @@
                     <h1 class="text-3xl font-extrabold">Espace Formateur</h1>
                     <p class="text-slate-400 mt-1">Gérez vos briefs et évaluez vos classes</p>
                 </div>
-                <div class="flex gap-4">
-                    <a href="#" class="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-indigo-500/20">
-                        <i data-lucide="zap" class="w-5 h-5"></i>
-                        Quick Debrief
-                    </a>
+                <div class="flex items-center gap-6">
+                    <div class="hidden md:flex gap-4">
+                        <a href="{{ route('teacher.briefs.create') }}" class="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-indigo-500/20">
+                            <i data-lucide="plus" class="w-5 h-5"></i>
+                            Nouveau Brief
+                        </a>
+                    </div>
+                    <div class="glass px-4 py-2 rounded-2xl flex items-center gap-3">
+                        <div class="text-right">
+                            <p class="text-sm font-bold">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</p>
+                            <p class="text-[10px] text-slate-400 uppercase tracking-wider">{{ Auth::user()->role ?? 'FORMATEUR' }}</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center font-bold text-white uppercase">
+                            {{ substr(Auth::user()->first_name, 0, 1) }}
+                        </div>
+                    </div>
                 </div>
             </header>
 
@@ -63,27 +74,33 @@
                 <!-- Left: Recent Submissions -->
                 <div class="lg:col-span-2 space-y-8">
                     <div class="glass p-8 rounded-[2.5rem]">
-                        <h3 class="text-xl font-bold mb-6">Suivi des Livrables</h3>
+                        <h3 class="text-xl font-bold mb-6 italic text-indigo-400">Suivi des Livrables</h3>
                         <div class="space-y-4">
+                            @forelse($recentDeliverables as $liv)
                             <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-indigo-500/30 transition-all cursor-pointer group">
                                 <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center font-bold text-indigo-400">S</div>
+                                    <div class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center font-bold text-indigo-400 uppercase">
+                                        {{ substr($liv->student->first_name, 0, 1) }}
+                                    </div>
                                     <div>
-                                        <p class="text-sm font-bold">Saad El Haidi</p>
-                                        <p class="text-xs text-slate-500">Brief PHP • PROJET</p>
+                                        <p class="text-sm font-bold">{{ $liv->student->first_name }} {{ $liv->student->last_name }}</p>
+                                        <p class="text-xs text-slate-500">{{ $liv->brief->title }}</p>
                                     </div>
                                 </div>
                                 <div class="text-right">
-                                    <p class="text-[10px] text-emerald-400 uppercase font-bold mb-1">Rendu le 01/01</p>
+                                    <p class="text-[10px] text-emerald-400 uppercase font-bold mb-1">Rendu le {{ \Carbon\Carbon::parse($liv->submitted_at)->format('d/m') }}</p>
                                     <div class="flex items-center gap-3 justify-end">
-                                        <a href="#" target="_blank" class="text-xs text-slate-400 hover:text-white transition-all flex items-center gap-1">
+                                        <a href="{{ $liv->content }}" target="_blank" class="text-xs text-slate-400 hover:text-white transition-all flex items-center gap-1">
                                                 <i data-lucide="external-link" class="w-3 h-3"></i>
                                                 Lien
                                         </a>
-                                        <a href="#" class="text-xs text-indigo-400 font-bold group-hover:underline">Évaluer</a>
+                                        <a href="{{ route('teacher.debriefing', ['student' => $liv->student_id, 'brief' => $liv->brief_id]) }}" class="text-xs text-indigo-400 font-bold group-hover:underline italic">Évaluer</a>
                                     </div>
                                 </div>
                             </div>
+                            @empty
+                            <p class="text-slate-500 italic text-sm">Aucun rendu récent.</p>
+                            @endforelse
                         </div>
                     </div>
 

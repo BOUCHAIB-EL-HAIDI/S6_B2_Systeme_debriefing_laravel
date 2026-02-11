@@ -47,13 +47,24 @@
         <!-- Main Content -->
         <main class="flex-1 ml-64 p-8 flex justify-center">
             <div class="w-full max-w-3xl">
-                <header class="mb-10 flex items-center gap-4">
-                    <a href="{{ route('teacher.briefs') }}" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all">
-                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
-                    </a>
-                    <div>
-                        <h1 class="text-3xl font-extrabold">Modifier le Brief</h1>
-                        <p class="text-slate-400 mt-1">Mettez à jour les informations du projet pédagogique</p>
+                <header class="mb-10 flex justify-between items-center bg-white/5 p-6 rounded-3xl border border-white/10">
+                    <div class="flex items-center gap-4">
+                        <a href="{{ route('teacher.briefs') }}" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all">
+                            <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                        </a>
+                        <div>
+                            <h1 class="text-2xl font-extrabold text-white">Modifier le Brief</h1>
+                            <p class="text-slate-400 text-xs mt-1">Mettez à jour les informations</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="text-right">
+                            <p class="text-sm font-bold">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</p>
+                            <p class="text-[10px] text-slate-400 uppercase tracking-wider">{{ Auth::user()->role ?? 'FORMATEUR' }}</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center font-bold text-white uppercase">
+                            {{ substr(Auth::user()->first_name, 0, 1) }}
+                        </div>
                     </div>
                 </header>
 

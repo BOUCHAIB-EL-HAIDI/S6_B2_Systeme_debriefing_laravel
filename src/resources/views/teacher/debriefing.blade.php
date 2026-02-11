@@ -53,11 +53,11 @@
                 </div>
                 <div class="glass px-4 py-2 rounded-2xl flex items-center gap-3">
                     <div class="text-right">
-                        <p class="text-sm font-bold">Saad El Haidi</p>
-                        <p class="text-[10px] text-slate-400 uppercase tracking-wider">TEACHER</p>
+                        <p class="text-sm font-bold">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</p>
+                        <p class="text-[10px] text-slate-400 uppercase tracking-wider">{{ Auth::user()->role ?? 'FORMATEUR' }}</p>
                     </div>
-                    <div class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center font-bold">
-                        S
+                    <div class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center font-bold text-white uppercase">
+                        {{ substr(Auth::user()->first_name, 0, 1) }}
                     </div>
                 </div>
             </header>

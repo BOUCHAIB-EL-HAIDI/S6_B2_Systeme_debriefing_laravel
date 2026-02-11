@@ -51,10 +51,23 @@
                     <h1 class="text-3xl font-extrabold">Gestion des Briefs</h1>
                     <p class="text-slate-400 mt-1">Créez des projets et assignez des compétences</p>
                 </div>
-                <a href="{{ route('teacher.briefs.create') }}" class="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-indigo-500/20">
-                    <i data-lucide="plus" class="w-5 h-5"></i>
-                    Nouveau Brief
-                </a>
+                <div class="flex items-center gap-6">
+                    <div class="hidden md:flex gap-4">
+                        <a href="{{ route('teacher.briefs.create') }}" class="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-indigo-500/20">
+                            <i data-lucide="plus" class="w-5 h-5"></i>
+                            Nouveau Brief
+                        </a>
+                    </div>
+                    <div class="glass px-4 py-2 rounded-2xl flex items-center gap-3">
+                        <div class="text-right">
+                            <p class="text-sm font-bold">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</p>
+                            <p class="text-[10px] text-slate-400 uppercase tracking-wider">{{ Auth::user()->role ?? 'FORMATEUR' }}</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center font-bold text-white uppercase">
+                            {{ substr(Auth::user()->first_name, 0, 1) }}
+                        </div>
+                    </div>
+                </div>
             </header>
 
             @if(session('success'))

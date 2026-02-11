@@ -58,10 +58,28 @@
                     </div>
 
                     <h1 class="text-4xl font-extrabold mb-4">{{ $brief->title }}</h1>
-                    <div class="flex flex-wrap gap-6 text-sm text-slate-400 mb-8">
-                        <span class="flex items-center gap-2"><i data-lucide="calendar" class="w-4 h-4 text-indigo-400"></i> Du {{ optional($brief->start_date)->format('d/m') }} au {{ optional($brief->end_date)->format('d/m/Y') }}</span>
-                        <span class="flex items-center gap-2"><i data-lucide="target" class="w-4 h-4 text-indigo-400"></i> Sprint: {{ $brief->sprint->name ?? 'N/A' }}</span>
-                        <span class="flex items-center gap-2 font-bold text-indigo-300 capitalize"><i data-lucide="layers" class="w-4 h-4"></i> {{ $brief->type }}</span>
+                    <div class="flex flex-wrap gap-4 text-xs font-bold uppercase tracking-widest text-indigo-400 mb-6">
+                        <span>{{ $brief->sprint->name ?? 'Aucun sprint' }}</span>
+                        <span class="text-slate-600">•</span>
+                        <span>Formateur : {{ $brief->teacher->first_name }} {{ $brief->teacher->last_name }}</span>
+                    </div>
+
+                    <div class="flex gap-6 text-sm text-slate-400 mb-8 border-b border-white/10 pb-8">
+                        <span class="flex items-center gap-2">
+                            <i data-lucide="calendar" class="w-4 h-4 text-slate-500"></i> 
+                            Du {{ optional($brief->start_date)->format('d/m') }} au {{ optional($brief->end_date)->format('d/m/Y') }}
+                        </span>
+                        @if(now() > $brief->end_date)
+                        <span class="flex items-center gap-2 text-rose-400">
+                            <i data-lucide="clock" class="w-4 h-4"></i> 
+                            Délai expiré
+                        </span>
+                        @else
+                        <span class="flex items-center gap-2 text-emerald-400">
+                            <i data-lucide="clock" class="w-4 h-4"></i> 
+                            En cours
+                        </span>
+                        @endif
                     </div>
 
                     <div class="prose prose-invert max-w-none text-slate-300 bg-white/5 p-6 rounded-2xl border border-white/10 whitespace-pre-line">
@@ -117,6 +135,7 @@
                         </div>
                         @endif
 
+                        @if(now() <= $brief->end_date)
                         <form action="{{ route('student.briefs.deliver', $brief->id) }}" method="POST" class="space-y-4">
                             @csrf
                             <div>
@@ -138,6 +157,12 @@
                                 {{ $livrables->isNotEmpty() ? 'Ajouter un rendu' : 'Soumettre mon travail' }}
                             </button>
                         </form>
+                        @else
+                        <div class="p-6 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-center">
+                            <i data-lucide="lock" class="w-6 h-6 text-rose-500 mx-auto mb-2"></i>
+                            <p class="text-sm font-bold text-rose-400">Les soumissions sont fermées car le délai est expiré.</p>
+                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
