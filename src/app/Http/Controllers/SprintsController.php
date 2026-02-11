@@ -15,6 +15,7 @@ class SprintsController extends Controller
      return view('admin.sprints.showandcreate' , compact('sprints'));
 
     }
+    
     public function store(Request $request)
     {
         $validated = $request->validate([

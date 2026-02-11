@@ -11,14 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('classe_sprint', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('classe_id')->constrained('classes')->cascadeOnDelete();
-            $table->foreignId('sprint_id')->constrained('sprints')->cascadeOnDelete();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('classe_sprint')) {
+            Schema::create('classe_sprint', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('classe_id')->constrained('classes')->cascadeOnDelete();
+                $table->foreignId('sprint_id')->constrained('sprints')->cascadeOnDelete();
+                $table->timestamps();
+            });
+        }
     }
 
+    
     /**
      * Reverse the migrations.
      */

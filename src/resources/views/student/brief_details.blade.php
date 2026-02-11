@@ -23,13 +23,13 @@
             </div>
             
             <nav class="space-y-2 flex-1">
-                <a href="{{ route('student.dashboard') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400">
+                <a href="{{ route('student.dashboard') }}" class="flex items-center gap-3 p-3 rounded-xl {{ Route::is('student.dashboard') ? 'text-white bg-indigo-500 shadow-lg shadow-indigo-500/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                     <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl text-white bg-indigo-500 shadow-lg shadow-indigo-500/20">
+                <a href="{{ route('student.briefs') }}" class="flex items-center gap-3 p-3 rounded-xl {{ Route::is('student.briefs*') ? 'text-white bg-indigo-500 shadow-lg shadow-indigo-500/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                     <i data-lucide="file-text"></i> <span>Mes Briefs</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-slate-400">
+                <a href="{{ route('student.progression') }}" class="flex items-center gap-3 p-3 rounded-xl {{ Route::is('student.progression') ? 'text-white bg-indigo-500 shadow-lg shadow-indigo-500/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                     <i data-lucide="award"></i> <span>Mon Parcours</span>
                 </a>
             </nav>
@@ -44,24 +44,28 @@
         <!-- Main Content -->
         <main class="flex-1 ml-64 p-8">
             <div class="max-w-4xl mx-auto">
-                <a href="#" class="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-6">
+                <a href="{{ route('student.briefs') }}" class="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-6">
                     <i data-lucide="arrow-left" class="w-4 h-4"></i> Retour aux briefs
                 </a>
 
                 <div class="glass rounded-[2.5rem] p-10 mb-8 border-t border-white/10 relative overflow-hidden">
                     <div class="absolute top-0 right-0 p-8">
-                        <span class="px-4 py-2 bg-indigo-500/20 text-indigo-400 text-xs font-bold uppercase rounded-full">En cours</span>
+                        @if($livrables->isNotEmpty())
+                        <span class="px-4 py-2 bg-emerald-500/20 text-emerald-400 text-xs font-bold uppercase rounded-full border border-emerald-500/20">Soumis ({{ $livrables->count() }})</span>
+                        @else
+                        <span class="px-4 py-2 bg-amber-500/20 text-amber-400 text-xs font-bold uppercase rounded-full border border-amber-500/20">Non Rendu</span>
+                        @endif
                     </div>
 
-                    <h1 class="text-4xl font-extrabold mb-4">Brief PHP MVC</h1>
-                    <div class="flex gap-6 text-sm text-slate-400 mb-8">
-                        <span class="flex items-center gap-2"><i data-lucide="calendar" class="w-4 h-4 text-indigo-400"></i> Du 01/01 au 10/02/2024</span>
-                        <span class="flex items-center gap-2"><i data-lucide="target" class="w-4 h-4 text-indigo-400"></i> Sprint: Sprint 1</span>
+                    <h1 class="text-4xl font-extrabold mb-4">{{ $brief->title }}</h1>
+                    <div class="flex flex-wrap gap-6 text-sm text-slate-400 mb-8">
+                        <span class="flex items-center gap-2"><i data-lucide="calendar" class="w-4 h-4 text-indigo-400"></i> Du {{ optional($brief->start_date)->format('d/m') }} au {{ optional($brief->end_date)->format('d/m/Y') }}</span>
+                        <span class="flex items-center gap-2"><i data-lucide="target" class="w-4 h-4 text-indigo-400"></i> Sprint: {{ $brief->sprint->name ?? 'N/A' }}</span>
+                        <span class="flex items-center gap-2 font-bold text-indigo-300 capitalize"><i data-lucide="layers" class="w-4 h-4"></i> {{ $brief->type }}</span>
                     </div>
 
-                    <div class="prose prose-invert max-w-none text-slate-300">
-                        <p>Création d'un système de gestion de débriefing en utilisant l'architecture MVC...</p>
-                        <p>Détails du projet ici...</p>
+                    <div class="prose prose-invert max-w-none text-slate-300 bg-white/5 p-6 rounded-2xl border border-white/10 whitespace-pre-line">
+                        {{ $brief->content }}
                     </div>
                 </div>
 
@@ -72,36 +76,66 @@
                             <i data-lucide="award" class="text-indigo-400"></i> Compétences visées
                         </h3>
                         <div class="space-y-4">
+                            @forelse($brief->competences as $comp)
                             <div class="flex items-center gap-4 p-4 bg-slate-900/50 rounded-2xl border border-white/5">
-                                <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold border border-indigo-500/20">C1</div>
-                                <span class="text-sm font-medium">Créer une base de données</span>
+                                <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold border border-indigo-500/20">{{ $comp->code }}</div>
+                                <span class="text-sm font-medium">{{ $comp->label }}</span>
                             </div>
-                            <div class="flex items-center gap-4 p-4 bg-slate-900/50 rounded-2xl border border-white/5">
-                                <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold border border-indigo-500/20">C2</div>
-                                <span class="text-sm font-medium">Développer une interface utilisateur</span>
-                            </div>
+                            @empty
+                            <p class="text-slate-500 italic text-sm">Aucune compétence associée.</p>
+                            @endforelse
                         </div>
                     </div>
 
-                    <!-- Submission -->
+                    <!-- Submission Status -->
                     <div class="glass p-8 rounded-3xl">
                         <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
                             <i data-lucide="send" class="text-emerald-400"></i> Rendu du travail
                         </h3>
                         
-                        <form action="#" method="POST" class="space-y-4">
-                            <input type="hidden" name="brief_id" value="1">
-                            <div>
-                                <label class="text-xs text-slate-400 mb-2 block uppercase tracking-widest">Lien du livrable (GitHub, etc.)</label>
-                                <div class="relative">
-                                    <i data-lucide="link" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500"></i>
-                                    <input type="url" name="livrable_url" value="" placeholder="https://github.com/..." required 
-                                        class="w-full bg-slate-900/50 border border-white/10 rounded-xl pl-12 pr-4 py-4 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600">
+                        @if($livrables->isNotEmpty())
+                        <div class="space-y-4 mb-8">
+                            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest">Vos rendus</h4>
+                            <div class="space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                                @foreach($livrables as $liv)
+                                <div class="p-4 bg-white/5 border border-white/10 rounded-2xl">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-[10px] text-slate-500">{{ \Carbon\Carbon::parse($liv->submitted_at)->format('d/m/Y à H:i') }}</span>
+                                    </div>
+                                    <a href="{{ $liv->content }}" target="_blank" class="text-sm text-indigo-400 hover:underline flex items-center gap-2 break-all">
+                                        <i data-lucide="external-link" class="w-3 h-3 flex-shrink-0"></i> Voir le rendu
+                                    </a>
+                                    @if($liv->comment)
+                                    <p class="mt-2 text-xs text-slate-400 italic">"{{ $liv->comment }}"</p>
+                                    @endif
                                 </div>
+                                @endforeach
                             </div>
-                            <button type="submit" class="w-full py-4 rounded-xl bg-indigo-500 hover:bg-indigo-600 font-bold transition-all shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2">
-                                <i data-lucide="check" class="w-5 h-5"></i>
-                                Soumettre mon travail
+                        </div>
+                        <div class="border-t border-white/10 pt-6 mt-6">
+                            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Nouveau rendu</h4>
+                        </div>
+                        @endif
+
+                        <form action="{{ route('student.briefs.deliver', $brief->id) }}" method="POST" class="space-y-4">
+                            @csrf
+                            <div>
+                                <label class="block text-sm font-medium text-slate-400 mb-2">Lien du rendu</label>
+                                <input type="url" name="content" required placeholder="https://github.com/..." 
+                                    class="w-full bg-slate-900/50 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm">
+                                @error('content') <p class="text-rose-500 text-[10px] mt-1">{{ $message }}</p> @enderror
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-slate-400 mb-2">Commentaire (opt.)</label>
+                                <textarea name="comment" rows="2" placeholder="Un petit mot..." 
+                                    class="w-full bg-slate-900/50 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all resize-none text-sm"></textarea>
+                                @error('comment') <p class="text-rose-500 text-[10px] mt-1">{{ $message }}</p> @enderror
+                            </div>
+
+                            <button type="submit" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-500/20 text-white font-bold transition-all flex items-center justify-center gap-2 group text-sm">
+                                <i data-lucide="plus-circle" class="w-4 h-4 group-hover:rotate-90 transition-transform"></i>
+                                {{ $livrables->isNotEmpty() ? 'Ajouter un rendu' : 'Soumettre mon travail' }}
                             </button>
                         </form>
                     </div>
@@ -109,6 +143,12 @@
             </div>
         </main>
     </div>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 20px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+    </style>
 
     <script>
         lucide.createIcons();

@@ -12,8 +12,8 @@ class AdminController extends Controller
     public function showDashboard()
     {
         $stats = [
-            'students_count' => User::where('role', 'STUDENT')->count(),
-            'teachers_count' => User::where('role', 'TEACHER')->count(),
+            'students_count' => User::Students()->count(),
+            'teachers_count' => User::Teachers()->count(),
             'classes_count' => Classe::count(),
             'sprints_count' => Sprint::count(),
             'competences_count' => Competence::count(),

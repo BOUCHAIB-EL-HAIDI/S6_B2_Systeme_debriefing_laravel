@@ -62,7 +62,14 @@
                 </div>
             </header>
 
-            <form action="#" method="POST">
+            @if(session('success'))
+                <div class="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            <form action="{{ route('teacher.debriefing.store') }}" method="POST">
+                @csrf
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <!-- Selection Column -->
                     <div class="lg:col-span-1 space-y-6">
@@ -74,14 +81,18 @@
                                     <label class="text-xs text-slate-400 mb-2 block uppercase tracking-widest">Le Brief</label>
                                     <select name="brief_id" required id="briefSelect" class="w-full bg-slate-900/50 border border-white/10 rounded-xl p-3 outline-none focus:border-indigo-500 transition-all text-slate-300">
                                         <option value="">Sélectionner un brief...</option>
-                                        <option value="1">Brief PHP MVC (Classe A)</option>
+                                        @foreach($briefs as $brief)
+                                            <option value="{{ $brief->id }}">{{ $brief->title }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div>
                                     <label class="text-xs text-slate-400 mb-2 block uppercase tracking-widest">L'Apprenant</label>
                                     <select name="student_id" required class="w-full bg-slate-900/50 border border-white/10 rounded-xl p-3 outline-none focus:border-indigo-500 transition-all text-slate-300">
                                         <option value="">Sélectionner un étudiant...</option>
-                                        <option value="1">Saad El Haidi</option>
+                                        @foreach($students as $student)
+                                            <option value="{{ $student->id }}">{{ $student->first_name }} {{ $student->last_name }} ({{ $student->classe->name ?? 'Sans Classe' }})</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -129,26 +140,65 @@
         lucide.createIcons();
 
         const briefSelect = document.getElementById('briefSelect');
-        const evalContainer = document.getElementById('evaluationContainer');
-        const currentBriefTitle = document.getElementById('currentBriefTitle');
-        const baseUrl = "";
-
         const studentSelect = document.querySelector('select[name="student_id"]');
         const livrableStatusEl = document.getElementById('livrableStatus');
+        const evalContainer = document.getElementById('evaluationContainer');
+        const currentBriefTitle = document.getElementById('currentBriefTitle');
 
-        const submitBtn = document.querySelector('button[type="submit"]');
+        function updateLivrableStatus() {
+            const briefId = briefSelect.value;
+            const studentId = studentSelect.value;
+            
+            if (!briefId || !studentId) {
+                livrableStatusEl.innerText = '—';
+                livrableStatusEl.className = 'px-3 py-1 rounded-full bg-slate-800 text-slate-500 text-xs font-bold uppercase';
+                return;
+            }
 
-        function checkLivrableStatus() {
-            // Simplified logic for static template
+            livrableStatusEl.innerText = 'Vérification...';
+            
+            fetch(`/teacher/briefs/${briefId}/students/${studentId}/livrable`)
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('livrableDetailsContainer');
+                    if (!container) {
+                        const newContainer = document.createElement('div');
+                        newContainer.id = 'livrableDetailsContainer';
+                        newContainer.className = 'mt-4 space-y-4';
+                        livrableStatusEl.parentElement.after(newContainer);
+                    }
+                    const detailsContainer = document.getElementById('livrableDetailsContainer');
+
+                    if (data.submitted) {
+                        livrableStatusEl.innerText = `${data.count} Rendu(s)`;
+                        livrableStatusEl.className = 'px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold uppercase';
+                        
+                        detailsContainer.innerHTML = data.deliveries.map((liv, index) => `
+                            <div class="p-4 bg-slate-900/50 border border-white/5 rounded-2xl">
+                                <p class="text-[10px] text-slate-500 uppercase font-bold mb-2">Rendu #${data.count - index}</p>
+                                <a href="${liv.content}" target="_blank" class="text-sm text-indigo-400 hover:underline flex items-center gap-2 break-all mb-2">
+                                    <i data-lucide="external-link" class="w-3 h-3 flex-shrink-0"></i> Voir le travail
+                                </a>
+                                ${liv.comment ? `<p class="text-xs text-slate-400 italic mt-2 border-t border-white/5 pt-2">"${liv.comment}"</p>` : ''}
+                            </div>
+                        `).join('');
+                        lucide.createIcons();
+                    } else {
+                        livrableStatusEl.innerText = 'Non Rendu';
+                        livrableStatusEl.className = 'px-3 py-1 rounded-full bg-rose-500/20 text-rose-400 text-xs font-bold uppercase';
+                        detailsContainer.innerHTML = '';
+                    }
+                });
         }
 
-        studentSelect.addEventListener('change', checkLivrableStatus);
+        studentSelect.addEventListener('change', updateLivrableStatus);
 
         briefSelect.addEventListener('change', function() {
             const briefId = this.value;
             const briefName = this.options[this.selectedIndex].text;
             
-            // Simplified logic for static template
+            updateLivrableStatus();
+
             if (!briefId) {
                 evalContainer.innerHTML = `
                     <div class="flex flex-col items-center justify-center py-20 text-slate-500 italic">
@@ -160,20 +210,25 @@
                 lucide.createIcons();
                 return;
             }
-            
-            // Mock competences for static template
-            const mockCompetences = [
-                {code: 'C1', label: 'Maquetter une application'},
-                {code: 'C2', label: 'Créer une base de données'}
-            ];
-            
+
+            // Show loading state
+            evalContainer.innerHTML = '<div class="flex justify-center py-20"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div></div>';
             currentBriefTitle.innerText = briefName;
-            renderCompetences(mockCompetences);
+
+            fetch(`/teacher/briefs/${briefId}/competences`)
+                .then(response => response.json())
+                .then(competences => {
+                    renderCompetences(competences);
+                })
+                .catch(error => {
+                    console.error('Error fetching competences:', error);
+                    evalContainer.innerHTML = '<p class="text-rose-500 text-center py-10">Erreur lors du chargement des compétences.</p>';
+                });
         });
 
         function renderCompetences(competences) {
             if (competences.length === 0) {
-                evalContainer.innerHTML = '<p class="text-center text-slate-500 italic">Aucune compétence associée à ce brief.</p>';
+                evalContainer.innerHTML = '<p class="text-center text-slate-500 italic py-10">Aucune compétence associée à ce brief.</p>';
                 return;
             }
 
@@ -184,7 +239,7 @@
                             <h4 class="text-indigo-400 font-bold text-lg">${comp.code}: ${comp.label}</h4>
                             <p class="text-xs text-slate-500 mt-1">Évaluation du niveau d'acquisition pour cette compétence.</p>
                         </div>
-                        <select name="evaluations[${comp.code}][status]" class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-lg px-3 py-2 text-xs font-bold uppercase outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                        <select name="evaluations[${comp.code}][status]" class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-lg px-3 py-2 text-xs font-bold uppercase outline-none focus:ring-2 focus:ring-indigo-500 transition-all cursor-pointer">
                             <option value="VALIDEE">Validée</option>
                             <option value="INVALIDE">Invalide</option>
                         </select>
@@ -192,7 +247,7 @@
                     
                     <input type="hidden" name="evaluations[${comp.code}][niveau]" value="NIVEAU_1">
 
-                    <div class="grid grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div class="level-card cursor-pointer bg-indigo-500/20 border-2 border-indigo-500 p-4 rounded-2xl flex flex-col items-center transition-all" data-level="NIVEAU_1">
                             <span class="text-[10px] uppercase font-bold text-indigo-300">Niveau 1</span>
                             <span class="text-xs font-bold">Imiter</span>

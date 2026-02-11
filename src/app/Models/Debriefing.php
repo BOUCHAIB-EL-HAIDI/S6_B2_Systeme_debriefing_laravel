@@ -9,7 +9,8 @@ class Debriefing extends Model
 {
     use HasFactory;
 
-    protected $table = 'debriefing';
+    protected $table = 'debriefings';
+    public $timestamps = false;
 
     protected $fillable = [
         'comment',

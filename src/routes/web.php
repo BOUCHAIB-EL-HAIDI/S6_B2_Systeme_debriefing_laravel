@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SprintsController;
 use App\Http\Controllers\CompetenceController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\StudentController;
 
 Route::get('/', [AuthController::class, 'showLogin'])->name('home');
 
@@ -52,16 +53,28 @@ Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->group(function () {
 
 Route::middleware(['auth', 'role:TEACHER'])->prefix('teacher')->group(function () {
     Route::get('/dashboard', [TeacherController::class, 'dashboard'])->name('teacher.dashboard');
-    Route::get('/briefs', [TeacherController::class, 'briefs'])->name('teacher.briefs');
-    Route::get('/briefs/create', [TeacherController::class, 'createBrief'])->name('teacher.briefs.create');
-    Route::get('/briefs/{id}', [TeacherController::class, 'briefDetails'])->name('teacher.briefs.details');
+    
+    // Brief CRUD
+    Route::get('/briefs', [TeacherController::class, 'index'])->name('teacher.briefs');
+    Route::get('/briefs/create', [TeacherController::class, 'create'])->name('teacher.briefs.create');
+    Route::post('/briefs', [TeacherController::class, 'store'])->name('teacher.briefs.store');
+    Route::get('/briefs/{id}', [TeacherController::class, 'show'])->name('teacher.briefs.details');
+    Route::get('/briefs/{id}/edit', [TeacherController::class, 'edit'])->name('teacher.briefs.edit');
+    Route::put('/briefs/{id}', [TeacherController::class, 'update'])->name('teacher.briefs.update');
+    Route::delete('/briefs/{id}', [TeacherController::class, 'destroy'])->name('teacher.briefs.destroy');
+
     Route::get('/debriefing', [TeacherController::class, 'debriefing'])->name('teacher.debriefing');
+    Route::post('/debriefing', [TeacherController::class, 'storeDebriefing'])->name('teacher.debriefing.store');
+    Route::get('/briefs/{id}/competences', [TeacherController::class, 'getBriefCompetences'])->name('teacher.briefs.competences');
+    Route::get('/briefs/{brief_id}/students/{student_id}/livrable', [TeacherController::class, 'checkLivrable'])->name('teacher.briefs.livrable.check');
     Route::get('/progression', [TeacherController::class, 'progression'])->name('teacher.progression');
 });
 
 Route::middleware(['auth', 'role:STUDENT'])->prefix('student')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('student.dashboard');
-    })->name('student.dashboard');
+    Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
+    Route::get('/briefs', [StudentController::class, 'briefs'])->name('student.briefs');
+    Route::get('/briefs/{id}', [StudentController::class, 'showBrief'])->name('student.briefs.details');
+    Route::post('/briefs/{id}/deliver', [StudentController::class, 'storeLivrable'])->name('student.briefs.deliver');
+    Route::get('/progression', [StudentController::class, 'progression'])->name('student.progression');
 });
 

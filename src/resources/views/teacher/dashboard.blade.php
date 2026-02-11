@@ -90,22 +90,25 @@
                     <div class="glass p-8 rounded-[2.5rem]">
                         <h3 class="text-xl font-bold mb-6">Mes Classes Actives</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="p-6 bg-slate-900 border border-white/5 rounded-2xl relative overflow-hidden group">
+                            @forelse($classes as $classe)
+                            <div class="p-6 bg-slate-900 border border-white/5 rounded-2xl relative overflow-hidden group hover:border-indigo-500/30 transition-all">
+                                @if(Auth::user()->classe_id == $classe->id)
                                 <div class="absolute top-0 right-0 px-3 py-1 bg-indigo-500/20 text-indigo-400 text-[10px] font-bold rounded-bl-xl border-l border-b border-indigo-500/20">
                                     Principal
                                 </div>
-                                <h4 class="font-bold mb-2">Classe A</h4>
+                                @endif
+                                <h4 class="font-bold mb-2">{{ $classe->name }}</h4>
                                 <div class="flex justify-between items-center text-xs text-slate-500">
-                                    <span>25 Apprenants</span>
-                                    <span class="text-indigo-400 font-bold">3 Sprints</span>
+                                    <span>{{ $classe->students_count }} Apprenants</span>
+                                    <span class="text-indigo-400 font-bold">{{ $classe->sprints_count ?? '-' }} Sprints</span>
                                 </div>
                                 <div class="flex justify-between items-center text-[10px] text-slate-600 mt-1 uppercase font-bold">
-                                    <span>Promotion 2024</span>
-                                </div>
-                                <div class="w-full h-1 bg-slate-800 rounded-full mt-3 overflow-hidden">
-                                    <div class="w-[88%] h-full bg-emerald-500"></div>
+                                    <span>Promotion {{ date('Y') }}</span>
                                 </div>
                             </div>
+                            @empty
+                            <p class="text-slate-500 italic text-sm">Aucune classe assignée.</p>
+                            @endforelse
                         </div>
                     </div>
                 </div>
@@ -114,24 +117,25 @@
                 <div class="space-y-8">
                     <div class="glass p-8 rounded-[2.5rem]">
                         <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-xl font-bold">Briefs</h3>
+                            <h3 class="text-xl font-bold">Briefs Récents</h3>
                             <a href="{{ route('teacher.briefs.create') }}" class="p-2 hover:bg-white/10 rounded-lg"><i data-lucide="plus" class="w-5 h-5"></i></a>
                         </div>
                         <div class="space-y-4">
+                            @forelse($briefs as $brief)
                             <div class="p-4 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl relative overflow-hidden group">
                                 <div class="absolute top-0 right-0 p-2">
-                                    <span class="w-2 h-2 rounded-full bg-emerald-500 block" title="En cours"></span>
+                                    <span class="w-2 h-2 rounded-full {{ $brief->is_assigned ? 'bg-emerald-500' : 'bg-amber-500' }} block" title="{{ $brief->is_assigned ? 'Assigné' : 'Brouillon' }}"></span>
                                 </div>
-                                <h4 class="text-sm font-bold text-indigo-300">Brief PHP MVC</h4>
-                                <p class="text-[10px] text-slate-500 mt-1">Fin le 10/02</p>
+                                <h4 class="text-sm font-bold text-indigo-300">{{ $brief->title }}</h4>
+                                <p class="text-[10px] text-slate-500 mt-1">Fin le {{ $brief->end_date->format('d/m') }}</p>
                                 <div class="mt-4 flex justify-between items-center">
-                                    <span class="text-[10px] font-bold text-slate-400">10/25 Rendus</span>
-                                    <a href="#" class="text-[10px] font-bold text-white bg-indigo-500 px-2 py-1 rounded">Détails</a>
-                                </div>
-                                <div class="w-full h-1 bg-slate-800 rounded-full mt-2 overflow-hidden">
-                                    <div class="h-full bg-indigo-500" style="width: 40%"></div>
+                                    <span class="text-[10px] font-bold text-slate-400">{{ $brief->type }}</span>
+                                    <a href="{{ route('teacher.briefs.details', $brief->id) }}" class="text-[10px] font-bold text-white bg-indigo-500 px-2 py-1 rounded">Détails</a>
                                 </div>
                             </div>
+                            @empty
+                            <p class="text-slate-500 italic text-sm">Aucun brief créé.</p>
+                            @endforelse
                         </div>
                     </div>
 

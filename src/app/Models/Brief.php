@@ -9,7 +9,9 @@ class Brief extends Model
 {
     use HasFactory;
 
-    protected $table = 'brief';
+    protected $table = 'briefs';
+
+    public $timestamps = false;
 
     protected $fillable = [
         'title',

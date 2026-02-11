@@ -57,42 +57,71 @@
                 </a>
             </header>
 
+            @if(session('success'))
+                <div class="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold">
+                    {{ session('success') }}
+                </div>
+            @endif
+
             <!-- Briefs Table -->
             <div class="glass rounded-3xl overflow-hidden">
                 <table class="w-full text-left">
                     <thead class="bg-white/5 border-b border-white/10">
                         <tr>
                             <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">Titre du Brief</th>
-                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">Classe / Sprint</th>
+                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">Sprint</th>
                             <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">Compétences</th>
                             <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400 text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-white/5">
+                        @forelse($briefs as $brief)
                         <tr class="hover:bg-white/5 transition-colors group">
                             <td class="px-6 py-4">
-                                <p class="font-bold text-sm">Brief PHP MVC</p>
-                                <span class="bg-slate-800 px-2 py-0.5 rounded text-[10px] text-slate-500 uppercase">PROJET</span>
+                                <p class="font-bold text-sm">{{ $brief->title }}</p>
+                                <span class="bg-slate-800 px-2 py-0.5 rounded text-[10px] text-slate-500 uppercase">{{ $brief->type }}</span>
                             </td>
                             <td class="px-6 py-4">
-                                <p class="text-xs font-medium">Classe A</p>
-                                <p class="text-[10px] text-slate-500">Sprint 1</p>
+                                <p class="text-xs font-medium">{{ $brief->sprint->name ?? 'N/A' }}</p>
+                                <p class="text-[10px] text-slate-500">Ordre: {{ $brief->sprint->order ?? '-' }}</p>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex gap-1 flex-wrap">
-                                    <span class="text-[9px] bg-indigo-500/10 text-indigo-400 px-1.5 py-0.5 rounded border border-indigo-500/20">C1</span>
-                                    <span class="text-[9px] bg-indigo-500/10 text-indigo-400 px-1.5 py-0.5 rounded border border-indigo-500/20">C2</span>
+                                    @foreach($brief->competences as $comp)
+                                        <span class="text-[9px] bg-indigo-500/10 text-indigo-400 px-1.5 py-0.5 rounded border border-indigo-500/20" title="{{ $comp->label }}">{{ $comp->code }}</span>
+                                    @endforeach
                                 </div>
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <a href="#" class="p-2 hover:bg-white/10 rounded-lg" title="Voir les détails"><i data-lucide="eye" class="w-4 h-4 text-slate-400"></i></a>
-                                    <button class="p-2 hover:bg-indigo-500/20 text-indigo-400 rounded-lg transition-colors"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                                    <a href="{{ route('teacher.briefs.details', $brief->id) }}" class="p-2 hover:bg-white/10 rounded-lg" title="Voir les détails">
+                                        <i data-lucide="eye" class="w-4 h-4 text-slate-400"></i>
+                                    </a>
+                                    <a href="{{ route('teacher.briefs.edit', $brief->id) }}" class="p-2 hover:bg-indigo-500/20 text-indigo-400 rounded-lg transition-colors" title="Modifier">
+                                        <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                    </a>
+                                    <form action="{{ route('teacher.briefs.destroy', $brief->id) }}" method="POST" class="inline" onsubmit="return confirm('Supprimer ce brief ?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="p-2 hover:bg-rose-500/20 text-rose-400 rounded-lg transition-colors" title="Supprimer">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
+                        @empty
+                        <tr>
+                            <td colspan="4" class="px-6 py-10 text-center text-slate-500 italic">
+                                Aucun brief créé pour le moment.
+                            </td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
+            </div>
+            <div class="mt-6">
+                {{ $briefs->links() }}
             </div>
         </main>
     </div>

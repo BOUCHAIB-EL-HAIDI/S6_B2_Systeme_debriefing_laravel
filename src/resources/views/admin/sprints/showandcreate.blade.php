@@ -124,7 +124,7 @@
                             @forelse($sprints as $sprint)
                                 <div class="p-4 bg-white/5 rounded-2xl border border-white/5 flex items-center justify-between group hover:border-indigo-500/30 transition-all">
                                     <div class="flex items-center gap-4">
-                                        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center font-bold text-sm">{{ $sprint->order }}</div>
+                                        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center font-bold text-sm">S{{ $sprint->order }}</div>
                                         <div>
                                             <h4 class="text-sm font-bold text-white">{{ $sprint->name }}</h4>
                                             <div class="flex gap-3 mt-1">

@@ -9,11 +9,12 @@ class Livrable extends Model
 {
     use HasFactory;
 
-    protected $table = 'livrable';
+    protected $table = 'livrables';
+    public $timestamps = false;
 
     protected $fillable = [
         'content',
-        'coment',
+        'comment',
         'student_id',
         'brief_id',
     ];

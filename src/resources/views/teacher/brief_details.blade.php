@@ -53,37 +53,42 @@
 
                 <div class="glass rounded-[2.5rem] p-10 mb-8 border-t border-white/10 relative overflow-hidden">
                     <div class="absolute top-0 right-0 p-8 flex gap-3">
-                        <span class="px-4 py-2 bg-emerald-500/20 text-emerald-400 text-xs font-bold uppercase rounded-full">En cours</span>
+                        @if($brief->is_assigned)
+                            <span class="px-4 py-2 bg-emerald-500/20 text-emerald-400 text-xs font-bold uppercase rounded-full">Assigné</span>
+                        @else
+                            <span class="px-4 py-2 bg-amber-500/20 text-amber-400 text-xs font-bold uppercase rounded-full">Brouillon</span>
+                        @endif
                     </div>
 
-                    <h1 class="text-4xl font-extrabold mb-2">Brief PHP MVC</h1>
-                    <p class="text-indigo-400 font-bold uppercase tracking-widest text-xs mb-6">Classe A • Sprint 1</p>
+                    <h1 class="text-4xl font-extrabold mb-2">{{ $brief->title }}</h1>
+                    <p class="text-indigo-400 font-bold uppercase tracking-widest text-xs mb-6">
+                        {{ $brief->sprint->name ?? 'Aucun sprint' }} • Ordre: {{ $brief->sprint->order ?? 'N/A' }}
+                    </p>
 
                     <div class="flex gap-6 text-sm text-slate-400 mb-8 border-b border-white/10 pb-8">
-                        <span class="flex items-center gap-2"><i data-lucide="calendar" class="w-4 h-4 text-slate-500"></i> Du 01/01/2024 au 10/02/2024</span>
-                        <span class="flex items-center gap-2"><i data-lucide="users" class="w-4 h-4 text-slate-500"></i> Individuel</span>
+                        <span class="flex items-center gap-2">
+                            <i data-lucide="calendar" class="w-4 h-4 text-slate-500"></i> 
+                            Du {{ $brief->start_date->format('d/m/Y') }} au {{ $brief->end_date->format('d/m/Y') }}
+                        </span>
+                        <span class="flex items-center gap-2">
+                            <i data-lucide="users" class="w-4 h-4 text-slate-500"></i> 
+                            {{ $brief->type == 'INDIVIDUAL' ? 'Individuel' : 'Collectif' }}
+                        </span>
                     </div>
 
                     <div class="prose prose-invert max-w-none text-slate-300">
-                        Content text here...
+                        {!! nl2br(e($brief->content)) !!}
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Stats -->
+                    <!-- Stats Card (Placeholder for now) -->
                     <div class="glass p-8 rounded-3xl">
                         <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
                             <i data-lucide="bar-chart-2" class="text-indigo-400"></i> Statistiques
                         </h3>
                         <div class="bg-slate-900/50 p-6 rounded-2xl border border-white/5">
-                            <div class="flex justify-between items-end mb-2">
-                                <span class="text-slate-400 text-sm font-bold uppercase">Taux de rendu</span>
-                                <span class="text-2xl font-black text-white">40%</span>
-                            </div>
-                            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden mb-2">
-                                <div class="h-full bg-indigo-500" style="width: 40%"></div>
-                            </div>
-                            <p class="text-xs text-slate-500 text-right">10 rendus sur 25 attendus</p>
+                            <p class="text-slate-500 text-sm italic">Les taux de rendu seront disponibles une fois les livrables connectés.</p>
                         </div>
                     </div>
 
@@ -93,14 +98,12 @@
                             <i data-lucide="award" class="text-emerald-400"></i> Compétences visées
                         </h3>
                         <div class="space-y-3">
+                            @foreach($brief->competences as $competence)
                             <div class="flex items-center gap-4 p-3 bg-slate-900/50 rounded-xl border border-white/5">
-                                <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold border border-emerald-500/20 text-xs">C1</div>
-                                <span class="text-xs font-medium text-slate-300">Maquetter une application</span>
+                                <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold border border-emerald-500/20 text-xs">{{ $competence->code }}</div>
+                                <span class="text-xs font-medium text-slate-300">{{ $competence->label }}</span>
                             </div>
-                            <div class="flex items-center gap-4 p-3 bg-slate-900/50 rounded-xl border border-white/5">
-                                <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold border border-emerald-500/20 text-xs">C2</div>
-                                <span class="text-xs font-medium text-slate-300">Créer une base de données</span>
-                            </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
