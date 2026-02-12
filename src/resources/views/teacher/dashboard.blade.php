@@ -132,10 +132,10 @@
                                                 @endif
                                                 
                                                 @if($track->is_evaluated)
-                                                    <span class="text-[10px] text-emerald-500 font-bold italic flex items-center gap-1">
+                                                    <a href="{{ route('teacher.debriefing', ['student' => $track->student->id, 'brief' => $track->brief->id]) }}" class="text-[10px] text-emerald-500 font-bold italic flex items-center gap-1 hover:underline">
                                                         <i data-lucide="check-circle" class="w-3 h-3"></i>
                                                         Déjà évalué
-                                                    </span>
+                                                    </a>
                                                 @else
                                                     <a href="{{ route('teacher.debriefing', ['student' => $track->student->id, 'brief' => $track->brief->id]) }}" class="text-[10px] text-indigo-400 font-bold hover:underline italic">Évaluer</a>
                                                 @endif

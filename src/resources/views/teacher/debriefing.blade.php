@@ -82,7 +82,7 @@
                                     <select name="brief_id" required id="briefSelect" class="w-full bg-slate-900/50 border border-white/10 rounded-xl p-3 outline-none focus:border-indigo-500 transition-all text-slate-300">
                                         <option value="">Sélectionner un brief...</option>
                                         @foreach($briefs as $brief)
-                                            <option value="{{ $brief->id }}">{{ $brief->title }}</option>
+                                            <option value="{{ $brief->id }}" {{ (isset($selectedBriefId) && $selectedBriefId == $brief->id) ? 'selected' : '' }}>{{ $brief->title }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -91,7 +91,7 @@
                                     <select name="student_id" required class="w-full bg-slate-900/50 border border-white/10 rounded-xl p-3 outline-none focus:border-indigo-500 transition-all text-slate-300">
                                         <option value="">Sélectionner un étudiant...</option>
                                         @foreach($students as $student)
-                                            <option value="{{ $student->id }}">{{ $student->first_name }} {{ $student->last_name }} ({{ $student->classe->name ?? 'Sans Classe' }})</option>
+                                            <option value="{{ $student->id }}" {{ (isset($selectedStudentId) && $selectedStudentId == $student->id) ? 'selected' : '' }}>{{ $student->first_name }} {{ $student->last_name }} ({{ $student->classe->name ?? 'Sans Classe' }})</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -219,12 +219,55 @@
                 .then(response => response.json())
                 .then(competences => {
                     renderCompetences(competences);
+                    // After rendering competences, check for existing debriefing data
+                    loadExistingDebriefing();
                 })
                 .catch(error => {
                     console.error('Error fetching competences:', error);
                     evalContainer.innerHTML = '<p class="text-rose-500 text-center py-10">Erreur lors du chargement des compétences.</p>';
                 });
         });
+
+        studentSelect.addEventListener('change', function() {
+            updateLivrableStatus();
+            loadExistingDebriefing();
+        });
+
+        function loadExistingDebriefing() {
+            const briefId = briefSelect.value;
+            const studentId = studentSelect.value;
+
+            if (!briefId || !studentId) return;
+
+            fetch(`/teacher/debriefing/data?brief_id=${briefId}&student_id=${studentId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.found) {
+                        // Populate comment
+                        document.querySelector('textarea[name="comment"]').value = data.comment || '';
+                        
+                        // Populate evaluations
+                        Object.keys(data.evaluations).forEach(code => {
+                            const eval = data.evaluations[code];
+                            const item = document.querySelector(`.competence-item[data-code="${code}"]`);
+                            if (item) {
+                                // Set status select
+                                const statusSelect = item.querySelector(`select[name="evaluations[${code}][status]"]`);
+                                if (statusSelect) statusSelect.value = eval.status;
+
+                                // Set level card
+                                const levelCard = item.querySelector(`.level-card[data-level="${eval.niveau}"]`);
+                                if (levelCard) levelCard.click();
+                            }
+                        });
+                    }
+                });
+        }
+
+        // Trigger initial load if values are pre-selected
+        if (briefSelect.value) {
+            briefSelect.dispatchEvent(new Event('change'));
+        }
 
         function renderCompetences(competences) {
             if (competences.length === 0) {

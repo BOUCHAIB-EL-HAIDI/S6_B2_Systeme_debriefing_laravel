@@ -64,6 +64,7 @@ Route::middleware(['auth', 'role:TEACHER'])->prefix('teacher')->group(function (
     Route::delete('/briefs/{id}', [TeacherController::class, 'destroy'])->name('teacher.briefs.destroy');
 
     Route::get('/debriefing', [TeacherController::class, 'debriefing'])->name('teacher.debriefing');
+    Route::get('/debriefing/data', [TeacherController::class, 'getDebriefingData'])->name('teacher.debriefing.data');
     Route::post('/debriefing', [TeacherController::class, 'storeDebriefing'])->name('teacher.debriefing.store');
     Route::get('/briefs/{id}/competences', [TeacherController::class, 'getBriefCompetences'])->name('teacher.briefs.competences');
     Route::get('/briefs/{brief_id}/students/{student_id}/livrable', [TeacherController::class, 'checkLivrable'])->name('teacher.briefs.livrable.check');

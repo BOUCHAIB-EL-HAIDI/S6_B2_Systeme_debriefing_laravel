@@ -194,7 +194,7 @@ class TeacherController extends Controller
         return redirect()->route('teacher.briefs')->with('success', 'Brief supprimé avec succès !');
     }
 
-    public function debriefing()
+    public function debriefing(Request $request)
     {
         $teacher = Auth::user();
         $briefs = $teacher->briefs()->latest()->get();
@@ -206,7 +206,38 @@ class TeacherController extends Controller
             ->orderBy('last_name')
             ->get();
 
-        return view('teacher.debriefing', compact('briefs', 'students'));
+        $selectedStudentId = $request->query('student');
+        $selectedBriefId = $request->query('brief');
+
+        return view('teacher.debriefing', compact('briefs', 'students', 'selectedStudentId', 'selectedBriefId'));
+    }
+
+    public function getDebriefingData(Request $request)
+    {
+        $request->validate([
+            'brief_id' => 'required|exists:briefs,id',
+            'student_id' => 'required|exists:users,id',
+        ]);
+
+        $debriefing = Debriefing::with('competences')
+            ->where('brief_id', $request->brief_id)
+            ->where('student_id', $request->student_id)
+            ->first();
+
+        if (!$debriefing) {
+            return response()->json(['found' => false]);
+        }
+
+        return response()->json([
+            'found' => true,
+            'comment' => $debriefing->comment,
+            'evaluations' => $debriefing->competences->mapWithKeys(function($comp) {
+                return [$comp->code => [
+                    'niveau' => $comp->pivot->niveau,
+                    'status' => $comp->pivot->status,
+                ]];
+            })
+        ]);
     }
 
     public function getBriefCompetences($id)
