@@ -60,7 +60,9 @@
                         <i data-lucide="user" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500"></i>
                         <select id="studentSelect" class="w-full bg-slate-900/50 border border-white/10 rounded-xl pl-12 pr-4 py-3 outline-none focus:border-indigo-500 transition-all text-slate-300">
                             <option value="">Choisir un étudiant...</option>
-                            <option value="1">Saad El Haidi</option>
+                            @foreach($students as $student)
+                                <option value="{{ $student->id }}">{{ $student->name }} ({{ $student->classe->name }})</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
@@ -82,7 +84,7 @@
         const studentSelect = document.getElementById('studentSelect');
         const historyContainer = document.getElementById('historyContainer');
 
-        studentSelect.addEventListener('change', function() {
+        studentSelect.addEventListener('change', async function() {
             const studentId = this.value;
             
             if (!studentId) {
@@ -96,21 +98,17 @@
                 return;
             }
 
-            // Mock history data for static template
-            const mockHistory = [
-                {
-                    brief_title: 'Brief PHP MVC',
-                    date: '2024-01-15',
-                    teacher_name: 'Formateur',
-                    comment: 'Bon travail global.',
-                    competences: [
-                        {code: 'C1', label: 'Maquetter une application', status: 'VALIDEE', niveau: 'NIVEAU_2'},
-                        {code: 'C2', label: 'Créer une base de données', status: 'VALIDEE', niveau: 'NIVEAU_1'}
-                    ]
-                }
-            ];
+            // Show loading state
+            historyContainer.innerHTML = '<div class="flex justify-center py-20"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div></div>';
 
-            renderHistory(mockHistory);
+            try {
+                const response = await fetch(`/teacher/progression/data/${studentId}`);
+                if (!response.ok) throw new Error();
+                const history = await response.json();
+                renderHistory(history);
+            } catch (e) {
+                historyContainer.innerHTML = '<p class="text-rose-500 text-center py-10">Erreur lors du chargement de l\'historique.</p>';
+            }
         });
 
         function renderHistory(history) {

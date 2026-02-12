@@ -112,19 +112,10 @@
                                         @endif
                                     </div>
 
-                                    <div class="flex items-center gap-3 justify-end min-w-[150px]">
+                                    <div class="flex items-center gap-3 justify-end">
                                         @if($track->livrable)
-                                            <div class="flex flex-col items-end gap-1">
-                                                <a href="{{ $track->livrable->content }}" target="_blank" class="text-[10px] text-slate-400 hover:text-white transition-all flex items-center gap-1 bg-white/5 px-2 py-1 rounded">
-                                                    <i data-lucide="external-link" class="w-3 h-3 text-indigo-400"></i>
-                                                    Lien
-                                                </a>
-                                                @if($track->livrables_count > 1)
-                                                    <span class="text-[9px] text-indigo-400 font-bold bg-indigo-500/10 px-1.5 rounded">{{ $track->livrables_count }} livrables</span>
-                                                @endif
-                                            </div>
-                                            <div class="flex flex-col gap-1">
-                                                @if($track->livrable && $track->livrable->comment)
+                                            <div class="flex flex-col gap-1 items-end">
+                                                @if($track->livrable->comment)
                                                     <a href="{{ route('teacher.students.livrables', $track->student->id) }}" class="text-[10px] bg-indigo-500 text-white font-bold px-3 py-1.5 rounded-lg hover:bg-indigo-600 transition-all flex items-center gap-1 shadow-lg shadow-indigo-500/20 mb-1">
                                                         <i data-lucide="eye" class="w-3 h-3"></i>
                                                         Voir livrables
@@ -139,11 +130,6 @@
                                                 @else
                                                     <a href="{{ route('teacher.debriefing', ['student' => $track->student->id, 'brief' => $track->brief->id]) }}" class="text-[10px] text-indigo-400 font-bold hover:underline italic">Évaluer</a>
                                                 @endif
-
-                                                <a href="{{ route('teacher.students.livrables', $track->student->id) }}" class="text-[9px] text-slate-500 hover:text-slate-300 transition-all flex items-center gap-0.5">
-                                                    <i data-lucide="history" class="w-2.5 h-2.5"></i>
-                                                    Historique
-                                                </a>
                                             </div>
                                         @else
                                             <span class="text-[10px] text-slate-600 italic">Pas de rendu</span>

@@ -320,6 +320,40 @@ class TeacherController extends Controller
 
     public function progression()
     {
-        return view('teacher.progression');
+        $teacher = Auth::user();
+        $classIds = $teacher->classes->pluck('id');
+        $students = User::students()
+            ->whereIn('classe_id', $classIds)
+            ->orderBy('name')
+            ->get();
+
+        return view('teacher.progression', compact('students'));
+    }
+
+    public function getStudentProgressionData($id)
+    {
+        $debriefings = Debriefing::where('student_id', $id)
+            ->with(['brief', 'teacher', 'competences'])
+            ->latest()
+            ->get();
+
+        $data = $debriefings->map(function($d) {
+            return [
+                'brief_title' => $d->brief->name,
+                'date' => $d->created_at->format('Y-m-d'),
+                'teacher_name' => $d->teacher->name,
+                'comment' => $d->comment,
+                'competences' => $d->competences->map(function($c) {
+                    return [
+                        'code' => $c->code,
+                        'label' => $c->label,
+                        'status' => $c->pivot->status,
+                        'niveau' => $c->pivot->niveau
+                    ];
+                })
+            ];
+        });
+
+        return response()->json($data);
     }
 }
