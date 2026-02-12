@@ -161,51 +161,100 @@
         const evalContainer = document.getElementById('evaluationContainer');
         const currentBriefTitle = document.getElementById('currentBriefTitle');
 
-        function refreshFormState() {
+        let currentBriefId = null;
+
+        async function refreshEvaluationState() {
             const briefId = briefSelect.value;
             const studentId = studentSelect.value;
             
-            if (!briefId || !studentId) {
+            // Clean banners first
+            document.getElementById('readOnlyBanner').classList.add('hidden');
+            document.getElementById('noSubmissionBanner').classList.add('hidden');
+            
+            if (!briefId) {
+                evalContainer.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-20 text-slate-500 italic">
+                        <i data-lucide="info" class="w-8 h-8 mb-3 opacity-20"></i>
+                        <p>Veuillez sélectionner un brief pour commencer l'évaluation.</p>
+                    </div>
+                `;
+                currentBriefTitle.innerText = '—';
                 livrableStatusEl.innerText = '—';
                 livrableStatusEl.className = 'px-3 py-1 rounded-full bg-slate-800 text-slate-500 text-xs font-bold uppercase';
                 if (document.getElementById('livrableDetailsContainer')) {
                     document.getElementById('livrableDetailsContainer').innerHTML = '';
                 }
                 resetEvaluationForm();
-                disableEvaluationForm(true); // Disable until selection
+                disableEvaluationForm(true);
+                currentBriefId = null;
+                lucide.createIcons();
                 return;
             }
 
-            livrableStatusEl.innerText = 'Vérification...';
-            resetEvaluationForm();
-            disableEvaluationForm(true); // Disable while loading
+            // 1. Load Competences if needed
+            if (currentBriefId !== briefId) {
+                resetEvaluationForm();
+                evalContainer.innerHTML = '<div class="flex justify-center py-20"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div></div>';
+                currentBriefTitle.innerText = briefSelect.options[briefSelect.selectedIndex].text;
+                
+                try {
+                    const response = await fetch(`/teacher/briefs/${briefId}/competences`);
+                    if (!response.ok) throw new Error();
+                    const competences = await response.json();
+                    renderCompetences(competences);
+                    currentBriefId = briefId;
+                } catch (e) {
+                    evalContainer.innerHTML = '<p class="text-rose-500 text-center py-10">Erreur lors du chargement des compétences.</p>';
+                    return;
+                }
+            }
 
-            // Sequence: Check Submissions -> Check Evaluations
-            fetch(`/teacher/briefs/${briefId}/students/${studentId}/livrable`)
-                .then(response => response.json())
-                .then(submissionData => {
-                    updateSubmissionUI(submissionData);
-                    
-                    if (submissionData.submitted) {
-                        // Only check evaluations if submitted
-                        return fetch(`/teacher/debriefing/data?brief_id=${briefId}&student_id=${studentId}`);
-                    } else {
-                        // Not submitted -> form stays disabled
-                        document.getElementById('noSubmissionBanner').classList.remove('hidden');
-                        return null;
-                    }
-                })
-                .then(response => response ? response.json() : null)
-                .then(evalData => {
-                    if (evalData && evalData.found) {
-                        populateEvaluationForm(evalData);
-                        disableEvaluationForm(true);
-                        document.getElementById('readOnlyBanner').classList.remove('hidden');
-                    } else if (evalData) {
-                        // Submitted but not evaluated -> ENABLE form
-                        disableEvaluationForm(false);
-                    }
-                });
+            if (!studentId) {
+                livrableStatusEl.innerText = '—';
+                if (document.getElementById('livrableDetailsContainer')) {
+                    document.getElementById('livrableDetailsContainer').innerHTML = '';
+                }
+                resetEvaluationForm();
+                disableEvaluationForm(true);
+                return;
+            }
+
+            // 2. Load Submissions & Evaluations
+            livrableStatusEl.innerText = 'Vérification...';
+            resetEvaluationStateInternal(); // Helper to clean and fetch
+        }
+
+        async function resetEvaluationStateInternal() {
+            const briefId = briefSelect.value;
+            const studentId = studentSelect.value;
+            resetEvaluationForm();
+            disableEvaluationForm(true);
+
+            try {
+                // Check Submissions
+                const subResp = await fetch(`/teacher/briefs/${briefId}/students/${studentId}/livrable`);
+                const subData = await subResp.json();
+                updateSubmissionUI(subData);
+
+                if (!subData.submitted) {
+                    document.getElementById('noSubmissionBanner').classList.remove('hidden');
+                    return;
+                }
+
+                // Check existing evaluation
+                const evalResp = await fetch(`/teacher/debriefing/data?brief_id=${briefId}&student_id=${studentId}`);
+                const evalData = await evalResp.json();
+
+                if (evalData.found) {
+                    populateEvaluationForm(evalData);
+                    document.getElementById('readOnlyBanner').classList.remove('hidden');
+                    disableEvaluationForm(true);
+                } else {
+                    disableEvaluationForm(false);
+                }
+            } catch (e) {
+                console.error("Evaluation load error:", e);
+            }
         }
 
         function updateSubmissionUI(data) {
@@ -221,7 +270,6 @@
             if (data.submitted) {
                 livrableStatusEl.innerText = `${data.count} Rendu(s)`;
                 livrableStatusEl.className = 'px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold uppercase';
-                document.getElementById('noSubmissionBanner').classList.add('hidden');
                 
                 detailsContainer.innerHTML = data.deliveries.map((liv, index) => `
                     <div class="p-4 bg-slate-900/50 border border-white/5 rounded-2xl">
@@ -257,47 +305,64 @@
             });
         }
 
-        studentSelect.addEventListener('change', refreshFormState);
-
-        briefSelect.addEventListener('change', function() {
-            const briefId = this.value;
-            const briefName = this.options[this.selectedIndex].text;
-            
-            refreshFormState();
-
-            if (!briefId) {
-                evalContainer.innerHTML = `
-                    <div class="flex flex-col items-center justify-center py-20 text-slate-500 italic">
-                        <i data-lucide="info" class="w-8 h-8 mb-3 opacity-20"></i>
-                        <p>Veuillez sélectionner un brief pour commencer l'évaluation.</p>
-                    </div>
-                `;
-                currentBriefTitle.innerText = '—';
-                lucide.createIcons();
-                return;
+        function resetEvaluationForm() {
+            const commentArea = document.querySelector('textarea[name="comment"]');
+            if (commentArea) {
+                commentArea.value = '';
+                commentArea.disabled = false;
             }
+            
+            document.querySelectorAll('.competence-item').forEach(item => {
+                const statusSelect = item.querySelector('select[name^="evaluations"]');
+                if (statusSelect) {
+                    statusSelect.value = 'VALIDEE';
+                    statusSelect.disabled = false;
+                }
+                
+                const level1Card = item.querySelector('.level-card[data-level="NIVEAU_1"]');
+                if (level1Card) level1Card.click();
 
-            // Show loading state for competences
-            evalContainer.innerHTML = '<div class="flex justify-center py-20"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div></div>';
-            currentBriefTitle.innerText = briefName;
-
-            fetch(`/teacher/briefs/${briefId}/competences`)
-                .then(response => response.json())
-                .then(competences => {
-                    renderCompetences(competences);
-                    // After rendering items, refresh state again to ensure banners/locking apply to new items
-                    refreshFormState();
-                })
-                .catch(error => {
-                    console.error('Error fetching competences:', error);
-                    evalContainer.innerHTML = '<p class="text-rose-500 text-center py-10">Erreur lors du chargement des compétences.</p>';
+                item.querySelectorAll('.level-card').forEach(c => {
+                    c.style.pointerEvents = 'auto';
                 });
-        });
+            });
 
-        // Trigger initial load if values are pre-selected
-        if (briefSelect.value) {
-            briefSelect.dispatchEvent(new Event('change'));
+            const submitBtn = document.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
         }
+
+        function disableEvaluationForm(disabled) {
+            const commentArea = document.querySelector('textarea[name="comment"]');
+            if (commentArea) commentArea.disabled = disabled;
+            
+            document.querySelectorAll('.competence-item').forEach(item => {
+                const statusSelect = item.querySelector('select[name^="evaluations"]');
+                if (statusSelect) statusSelect.disabled = disabled;
+                
+                item.querySelectorAll('.level-card').forEach(c => {
+                    c.style.pointerEvents = disabled ? 'none' : 'auto';
+                });
+            });
+
+            const submitBtn = document.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = disabled;
+                if (disabled) {
+                    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+        }
+
+        briefSelect.addEventListener('change', refreshEvaluationState);
+        studentSelect.addEventListener('change', refreshEvaluationState);
+
+        // Initial trigger
+        if (briefSelect.value) refreshEvaluationState();
 
         function renderCompetences(competences) {
             if (competences.length === 0) {
