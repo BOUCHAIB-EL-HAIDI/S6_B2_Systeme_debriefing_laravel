@@ -96,7 +96,7 @@ class TeacherController extends Controller
             'briefs_count' => $teacher->briefs()->count(),
             'classes_count' => $classes->count(),
         ];
-        return view('teacher.dashboard', compact('stats', 'classes', 'recentBriefs', 'deliverablesTracking'));
+        return view('teacher.dashboard', compact('stats', 'classes', 'briefs', 'deliverablesTracking'));
     }
 
     public function studentLivrables($id)
