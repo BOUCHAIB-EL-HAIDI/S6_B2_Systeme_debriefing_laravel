@@ -257,17 +257,22 @@ class TeacherController extends Controller
             'evaluations.*.status' => 'required|in:VALIDEE,INVALIDE',
         ]);
 
-        // Create or update debriefing
-        $debriefing = Debriefing::updateOrCreate(
-            [
-                'brief_id' => $request->brief_id,
-                'student_id' => $request->student_id,
-            ],
-            [
-                'teacher_id' => Auth::id(),
-                'comment' => $request->comment,
-            ]
-        );
+        // Check if debriefing already exists
+        $exists = Debriefing::where('brief_id', $request->brief_id)
+            ->where('student_id', $request->student_id)
+            ->exists();
+
+        if ($exists) {
+            return redirect()->back()->with('error', 'Cet étudiant a déjà été évalué pour ce brief. L\'évaluation ne peut pas être modifiée.');
+        }
+
+        // Create debriefing
+        $debriefing = Debriefing::create([
+            'brief_id' => $request->brief_id,
+            'student_id' => $request->student_id,
+            'teacher_id' => Auth::id(),
+            'comment' => $request->comment,
+        ]);
 
         // Sync competences with pivot data
         $syncData = [];

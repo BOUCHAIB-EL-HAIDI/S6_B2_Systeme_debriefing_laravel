@@ -68,6 +68,17 @@
                 </div>
             @endif
 
+            @if(session('error'))
+                <div class="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 font-bold">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            <div id="readOnlyBanner" class="hidden mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 font-bold flex items-center gap-3">
+                <i data-lucide="lock" class="w-5 h-5"></i>
+                <span>Mode Lecture : Cette évaluation a déjà été validée et ne peut plus être modifiée.</span>
+            </div>
+
             <form action="{{ route('teacher.debriefing.store') }}" method="POST">
                 @csrf
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -244,7 +255,9 @@
                 .then(data => {
                     if (data.found) {
                         // Populate comment
-                        document.querySelector('textarea[name="comment"]').value = data.comment || '';
+                        const commentArea = document.querySelector('textarea[name="comment"]');
+                        commentArea.value = data.comment || '';
+                        commentArea.disabled = true;
                         
                         // Populate evaluations
                         Object.keys(data.evaluations).forEach(code => {
@@ -253,13 +266,43 @@
                             if (item) {
                                 // Set status select
                                 const statusSelect = item.querySelector(`select[name="evaluations[${code}][status]"]`);
-                                if (statusSelect) statusSelect.value = eval.status;
+                                if (statusSelect) {
+                                    statusSelect.value = eval.status;
+                                    statusSelect.disabled = true;
+                                }
 
                                 // Set level card
                                 const levelCard = item.querySelector(`.level-card[data-level="${eval.niveau}"]`);
                                 if (levelCard) levelCard.click();
+                                
+                                // Disable level cards for this item
+                                item.querySelectorAll('.level-card').forEach(c => {
+                                    c.style.pointerEvents = 'none';
+                                });
                             }
                         });
+
+                        // Disable form submission
+                        document.querySelector('button[type="submit"]').disabled = true;
+                        document.querySelector('button[type="submit"]').classList.add('opacity-50', 'cursor-not-allowed');
+                        document.getElementById('readOnlyBanner').classList.remove('hidden');
+                    } else {
+                        // Reset form state for new evaluation
+                        const commentArea = document.querySelector('textarea[name="comment"]');
+                        commentArea.disabled = false;
+                        
+                        document.querySelectorAll('.competence-item').forEach(item => {
+                            const statusSelect = item.querySelector('select[name^="evaluations"]');
+                            if (statusSelect) statusSelect.disabled = false;
+                            
+                            item.querySelectorAll('.level-card').forEach(c => {
+                                c.style.pointerEvents = 'auto';
+                            });
+                        });
+
+                        document.querySelector('button[type="submit"]').disabled = false;
+                        document.querySelector('button[type="submit"]').classList.remove('opacity-50', 'cursor-not-allowed');
+                        document.getElementById('readOnlyBanner').classList.add('hidden');
                     }
                 });
         }
