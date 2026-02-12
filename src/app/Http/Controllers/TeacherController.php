@@ -61,11 +61,20 @@ class TeacherController extends Controller
                 }
             }
             
+            // Check if already debriefed for this brief
+            $isEvaluated = false;
+            if ($latestBrief) {
+                $isEvaluated = Debriefing::where('student_id', $student->id)
+                    ->where('brief_id', $latestBrief->id)
+                    ->exists();
+            }
+            
             return (object)[
                 'student' => $student,
                 'livrable' => $allLivrablesForBrief->first(), // keep reference to latest for quick link
                 'livrables_count' => $allLivrablesForBrief->count(),
                 'status' => $status,
+                'is_evaluated' => $isEvaluated,
                 'brief' => $latestBrief
             ];
         });
@@ -83,7 +92,13 @@ class TeacherController extends Controller
         $livrables = Livrable::where('student_id', $id)
             ->with('brief')
             ->latest('submitted_at')
-            ->get();
+            ->get()
+            ->map(function($livrable) use ($id) {
+                $livrable->is_evaluated = Debriefing::where('student_id', $id)
+                    ->where('brief_id', $livrable->brief_id)
+                    ->exists();
+                return $livrable;
+            });
             
         return view('teacher.student_livrables', compact('student', 'livrables'));
     }

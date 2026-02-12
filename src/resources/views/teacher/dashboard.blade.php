@@ -130,7 +130,16 @@
                                                         Voir livrables
                                                     </a>
                                                 @endif
-                                                <a href="{{ route('teacher.debriefing', ['student' => $track->student->id, 'brief' => $track->brief->id]) }}" class="text-[10px] text-indigo-400 font-bold hover:underline italic">Évaluer</a>
+                                                
+                                                @if($track->is_evaluated)
+                                                    <span class="text-[10px] text-emerald-500 font-bold italic flex items-center gap-1">
+                                                        <i data-lucide="check-circle" class="w-3 h-3"></i>
+                                                        Déjà évalué
+                                                    </span>
+                                                @else
+                                                    <a href="{{ route('teacher.debriefing', ['student' => $track->student->id, 'brief' => $track->brief->id]) }}" class="text-[10px] text-indigo-400 font-bold hover:underline italic">Évaluer</a>
+                                                @endif
+
                                                 <a href="{{ route('teacher.students.livrables', $track->student->id) }}" class="text-[9px] text-slate-500 hover:text-slate-300 transition-all flex items-center gap-0.5">
                                                     <i data-lucide="history" class="w-2.5 h-2.5"></i>
                                                     Historique

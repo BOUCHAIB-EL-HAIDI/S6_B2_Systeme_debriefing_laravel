@@ -112,9 +112,16 @@
                                         </a>
                                     </td>
                                     <td class="py-6">
-                                        <a href="{{ route('teacher.debriefing', ['student' => $student->id, 'brief' => $liv->brief_id]) }}" class="text-xs font-extrabold text-white bg-indigo-500 hover:bg-indigo-600 transition-all uppercase tracking-wider italic px-4 py-2 rounded-xl shadow-lg shadow-indigo-500/20">
-                                            Évaluer
-                                        </a>
+                                        @if($liv->is_evaluated)
+                                            <span class="text-xs font-extrabold text-emerald-500 bg-emerald-500/10 transition-all uppercase tracking-wider italic px-4 py-2 rounded-xl border border-emerald-500/20 flex items-center gap-2 w-fit">
+                                                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                                                Évalué
+                                            </span>
+                                        @else
+                                            <a href="{{ route('teacher.debriefing', ['student' => $student->id, 'brief' => $liv->brief_id]) }}" class="text-xs font-extrabold text-white bg-indigo-500 hover:bg-indigo-600 transition-all uppercase tracking-wider italic px-4 py-2 rounded-xl shadow-lg shadow-indigo-500/20">
+                                                Évaluer
+                                            </a>
+                                        @endif
                                     </td>
                                 </tr>
                                 @empty
