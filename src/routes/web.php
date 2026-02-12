@@ -68,6 +68,7 @@ Route::middleware(['auth', 'role:TEACHER'])->prefix('teacher')->group(function (
     Route::get('/briefs/{id}/competences', [TeacherController::class, 'getBriefCompetences'])->name('teacher.briefs.competences');
     Route::get('/briefs/{brief_id}/students/{student_id}/livrable', [TeacherController::class, 'checkLivrable'])->name('teacher.briefs.livrable.check');
     Route::get('/progression', [TeacherController::class, 'progression'])->name('teacher.progression');
+    Route::get('/students/{id}/livrables', [TeacherController::class, 'studentLivrables'])->name('teacher.students.livrables');
 });
 
 Route::middleware(['auth', 'role:STUDENT'])->prefix('student')->group(function () {

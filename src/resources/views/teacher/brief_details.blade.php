@@ -45,6 +45,7 @@
         </aside>
 
         <!-- Main Content -->
+        <main class="flex-1 ml-64 p-8">
             <header class="flex justify-between items-center mb-10">
                 <div>
                     <h1 class="text-3xl font-extrabold">Détails du Brief</h1>
@@ -63,6 +64,8 @@
                 </div>
             </header>
 
+            <div class="space-y-8">
+                <div class="glass p-10 rounded-[2.5rem] bg-gradient-to-br from-indigo-500/5 to-transparent">
                     <h1 class="text-4xl font-extrabold mb-2">{{ $brief->title }}</h1>
                     <p class="text-indigo-400 font-bold uppercase tracking-widest text-xs mb-6">
                         {{ $brief->sprint->name ?? 'Aucun sprint' }} • Ordre: {{ $brief->sprint->order ?? 'N/A' }}
@@ -79,7 +82,7 @@
                         </span>
                     </div>
 
-                    <div class="prose prose-invert max-w-none text-slate-300">
+                    <div class="prose prose-invert max-w-none text-slate-300 leading-relaxed">
                         {!! nl2br(e($brief->content)) !!}
                     </div>
                 </div>

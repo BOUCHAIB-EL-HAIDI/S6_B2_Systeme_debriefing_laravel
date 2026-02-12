@@ -21,24 +21,65 @@ class TeacherController extends Controller
         $classes = $teacher->classes()->withCount('students')->get();
         $briefs = $teacher->briefs()->latest()->take(5)->get();
 
-        // Get recent deliverables from any student in any of the teacher's classes
-        $recentDeliverables = Livrable::whereIn('student_id', function($query) use ($teacher) {
-                $query->select('student_id')
-                    ->from('classe_user') // Assuming a pivot table or relationship
-                    ->whereIn('classe_id', $teacher->classes->pluck('id'));
-            })
-            // If the structure is simpler (e.g., student has classe_id)
-            ->orWhereIn('student_id', User::whereIn('classe_id', $teacher->classes->pluck('id'))->pluck('id'))
-            ->with(['student', 'brief'])
-            ->latest('submitted_at')
-            ->take(5)
+        // Get all students in teacher's classes
+        $classIds = $classes->pluck('id');
+        $students = User::students()
+            ->whereIn('classe_id', $classIds)
+            ->with('classe')
             ->get();
-        
+            
+        // Get the latest brief for each class taught by the teacher
+        $latestBriefsByClass = [];
+        foreach ($classes as $classe) {
+            $latestBriefsByClass[$classe->id] = Brief::whereHas('sprint.classes', function($q) use ($classe) {
+                $q->where('classes.id', $classe->id);
+            })->latest('start_date')->first();
+        }
+
+        // Map students to their status for THEIR class's latest brief
+        $deliverablesTracking = $students->map(function($student) use ($latestBriefsByClass) {
+            $latestBrief = $latestBriefsByClass[$student->classe_id] ?? null;
+            $livrable = null;
+            $status = 'PAS_DE_BRIEF';
+            
+            if ($latestBrief) {
+                $livrable = Livrable::where('student_id', $student->id)
+                    ->where('brief_id', $latestBrief->id)
+                    ->first();
+                    
+                if ($livrable) {
+                    $status = 'RENDU';
+                } elseif ($latestBrief->end_date < now()->startOfDay()) {
+                    $status = 'INVALIDE';
+                } else {
+                    $status = 'EN_ATTENTE';
+                }
+            }
+            
+            return (object)[
+                'student' => $student,
+                'livrable' => $livrable,
+                'status' => $status,
+                'brief' => $latestBrief
+            ];
+        });
+
         $stats = [
             'briefs_count' => $teacher->briefs()->count(),
             'classes_count' => $classes->count(),
         ];
-        return view('teacher.dashboard', compact('stats', 'classes', 'briefs', 'recentDeliverables'));
+        return view('teacher.dashboard', compact('stats', 'classes', 'briefs', 'deliverablesTracking'));
+    }
+
+    public function studentLivrables($id)
+    {
+        $student = User::students()->findOrFail($id);
+        $livrables = Livrable::where('student_id', $id)
+            ->with('brief')
+            ->latest('submitted_at')
+            ->get();
+            
+        return view('teacher.student_livrables', compact('student', 'livrables'));
     }
 
     public function index()

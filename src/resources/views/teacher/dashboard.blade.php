@@ -76,30 +76,57 @@
                     <div class="glass p-8 rounded-[2.5rem]">
                         <h3 class="text-xl font-bold mb-6 italic text-indigo-400">Suivi des Livrables</h3>
                         <div class="space-y-4">
-                            @forelse($recentDeliverables as $liv)
-                            <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-indigo-500/30 transition-all cursor-pointer group">
+                            @forelse($deliverablesTracking as $track)
+                            <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-indigo-500/30 transition-all group">
                                 <div class="flex items-center gap-4">
                                     <div class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center font-bold text-indigo-400 uppercase">
-                                        {{ substr($liv->student->first_name, 0, 1) }}
+                                        {{ substr($track->student->first_name, 0, 1) }}
                                     </div>
                                     <div>
-                                        <p class="text-sm font-bold">{{ $liv->student->first_name }} {{ $liv->student->last_name }}</p>
-                                        <p class="text-xs text-slate-500">{{ $liv->brief->title }}</p>
+                                        <a href="{{ route('teacher.students.livrables', $track->student->id) }}" class="text-sm font-bold hover:text-indigo-400 transition-colors">
+                                            {{ $track->student->first_name }} {{ $track->student->last_name }}
+                                        </a>
+                                        <p class="text-[10px] text-slate-500">
+                                            @if($track->brief)
+                                                Brief: {{ $track->brief->title }}
+                                            @else
+                                                Aucun brief actif
+                                            @endif
+                                        </p>
                                     </div>
                                 </div>
-                                <div class="text-right">
-                                    <p class="text-[10px] text-emerald-400 uppercase font-bold mb-1">Rendu le {{ \Carbon\Carbon::parse($liv->submitted_at)->format('d/m') }}</p>
-                                    <div class="flex items-center gap-3 justify-end">
-                                        <a href="{{ $liv->content }}" target="_blank" class="text-xs text-slate-400 hover:text-white transition-all flex items-center gap-1">
+                                <div class="text-right flex items-center gap-6">
+                                    <div>
+                                        @if($track->status === 'RENDU')
+                                            <span class="px-3 py-1 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold rounded-full border border-emerald-500/20">RENDU</span>
+                                        @elseif($track->status === 'INVALIDE')
+                                            <span class="px-3 py-1 bg-rose-500/10 text-rose-400 text-[10px] font-bold rounded-full border border-rose-500/20">INVALIDE</span>
+                                        @elseif($track->status === 'EN_ATTENTE')
+                                            <span class="px-3 py-1 bg-amber-500/10 text-amber-400 text-[10px] font-bold rounded-full border border-amber-500/20">EN ATTENTE</span>
+                                        @else
+                                            <span class="px-3 py-1 bg-slate-500/10 text-slate-400 text-[10px] font-bold rounded-full border border-white/10">-</span>
+                                        @endif
+                                        
+                                        @if($track->livrable)
+                                            <p class="text-[9px] text-slate-600 mt-1">Le {{ \Carbon\Carbon::parse($track->livrable->submitted_at)->format('d/m à H:i') }}</p>
+                                        @endif
+                                    </div>
+
+                                    <div class="flex items-center gap-3 justify-end min-w-[100px]">
+                                        @if($track->livrable)
+                                            <a href="{{ $track->livrable->content }}" target="_blank" class="text-[10px] text-slate-400 hover:text-white transition-all flex items-center gap-1">
                                                 <i data-lucide="external-link" class="w-3 h-3"></i>
                                                 Lien
-                                        </a>
-                                        <a href="{{ route('teacher.debriefing', ['student' => $liv->student_id, 'brief' => $liv->brief_id]) }}" class="text-xs text-indigo-400 font-bold group-hover:underline italic">Évaluer</a>
+                                            </a>
+                                            <a href="{{ route('teacher.debriefing', ['student' => $track->student->id, 'brief' => $track->brief->id]) }}" class="text-[10px] text-indigo-400 font-bold hover:underline italic">Évaluer</a>
+                                        @else
+                                            <span class="text-[10px] text-slate-600 italic">Pas de rendu</span>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
                             @empty
-                            <p class="text-slate-500 italic text-sm">Aucun rendu récent.</p>
+                            <p class="text-slate-500 italic text-sm text-center py-4">Aucun étudiant assigné à vos classes.</p>
                             @endforelse
                         </div>
                     </div>
