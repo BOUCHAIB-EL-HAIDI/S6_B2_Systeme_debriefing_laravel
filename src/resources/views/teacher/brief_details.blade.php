@@ -64,25 +64,26 @@
                 </div>
             </header>
 
-            <div class="space-y-8">
-                <div class="glass p-10 rounded-[2.5rem] bg-gradient-to-br from-indigo-500/5 to-transparent">
-                    <h1 class="text-4xl font-extrabold mb-2">{{ $brief->title }}</h1>
-                    <p class="text-indigo-400 font-bold uppercase tracking-widest text-xs mb-6">
+            <div class="space-y-8 max-w-7xl mx-auto">
+                <div class="glass p-10 rounded-[2.5rem] bg-gradient-to-br from-indigo-500/5 to-transparent border-indigo-500/20">
+                    <h1 class="text-5xl font-extrabold mb-4 tracking-tight">{{ $brief->title }}</h1>
+                    <p class="text-indigo-400 font-bold uppercase tracking-widest text-sm mb-8 flex items-center gap-2">
+                        <i data-lucide="layers" class="w-4 h-4"></i>
                         {{ $brief->sprint->name ?? 'Aucun sprint' }} • Ordre: {{ $brief->sprint->order ?? 'N/A' }}
                     </p>
 
-                    <div class="flex gap-6 text-sm text-slate-400 mb-8 border-b border-white/10 pb-8">
-                        <span class="flex items-center gap-2">
-                            <i data-lucide="calendar" class="w-4 h-4 text-slate-500"></i> 
-                            Du {{ $brief->start_date->format('d/m/Y') }} au {{ $brief->end_date->format('d/m/Y') }}
+                    <div class="flex flex-wrap gap-8 text-sm text-slate-400 mb-10 border-b border-white/10 pb-10">
+                        <span class="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-xl">
+                            <i data-lucide="calendar" class="w-5 h-5 text-indigo-400"></i> 
+                            <span class="font-semibold">Période:</span> {{ $brief->start_date->format('d/m/Y') }} — {{ $brief->end_date->format('d/m/Y') }}
                         </span>
-                        <span class="flex items-center gap-2">
-                            <i data-lucide="users" class="w-4 h-4 text-slate-500"></i> 
-                            {{ $brief->type == 'INDIVIDUAL' ? 'Individuel' : 'Collectif' }}
+                        <span class="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-xl">
+                            <i data-lucide="users" class="w-5 h-5 text-indigo-400"></i> 
+                            <span class="font-semibold">Type:</span> {{ $brief->type == 'INDIVIDUAL' ? 'Individuel' : 'Collectif' }}
                         </span>
                     </div>
 
-                    <div class="prose prose-invert max-w-none text-slate-300 leading-relaxed">
+                    <div class="prose prose-invert max-w-none text-slate-300 leading-relaxed text-lg">
                         {!! nl2br(e($brief->content)) !!}
                     </div>
                 </div>

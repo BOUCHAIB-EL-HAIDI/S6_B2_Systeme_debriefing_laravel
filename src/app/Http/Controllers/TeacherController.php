@@ -28,31 +28,36 @@ class TeacherController extends Controller
             ->with('classe')
             ->get();
             
-        // Get the latest brief for each class taught by the teacher
+        // Get the latest brief for each class taught by the teacher (only those that have started)
         $latestBriefsByClass = [];
         foreach ($classes as $classe) {
             $latestBriefsByClass[$classe->id] = Brief::whereHas('sprint.classes', function($q) use ($classe) {
                 $q->where('classes.id', $classe->id);
-            })->latest('start_date')->first();
+            })
+            ->where('start_date', '<=', now())
+            ->latest('start_date')
+            ->first();
         }
 
-        // Map students to their status for THEIR class's latest brief
+        // Map students to their status for THEIR class's latest started brief
         $deliverablesTracking = $students->map(function($student) use ($latestBriefsByClass) {
             $latestBrief = $latestBriefsByClass[$student->classe_id] ?? null;
             $livrable = null;
             $status = 'PAS_DE_BRIEF';
             
             if ($latestBrief) {
+                // Find if the student has a submission for this specific brief
                 $livrable = Livrable::where('student_id', $student->id)
                     ->where('brief_id', $latestBrief->id)
+                    ->latest('submitted_at')
                     ->first();
                     
                 if ($livrable) {
                     $status = 'RENDU';
-                } elseif ($latestBrief->end_date < now()->startOfDay()) {
-                    $status = 'INVALIDE';
+                } elseif ($latestBrief->end_date->endOfDay() < now()) {
+                    $status = 'INVALIDE'; // Deadline passed and no work submitted
                 } else {
-                    $status = 'EN_ATTENTE';
+                    $status = 'EN_ATTENTE'; // Deadline not passed yet
                 }
             }
             
