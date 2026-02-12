@@ -42,17 +42,17 @@ class TeacherController extends Controller
         // Map students to their status for THEIR class's latest started brief
         $deliverablesTracking = $students->map(function($student) use ($latestBriefsByClass) {
             $latestBrief = $latestBriefsByClass[$student->classe_id] ?? null;
-            $livrable = null;
+            $allLivrablesForBrief = collect();
             $status = 'PAS_DE_BRIEF';
             
             if ($latestBrief) {
-                // Find if the student has a submission for this specific brief
-                $livrable = Livrable::where('student_id', $student->id)
+                // Find all submissions for this specific brief
+                $allLivrablesForBrief = Livrable::where('student_id', $student->id)
                     ->where('brief_id', $latestBrief->id)
                     ->latest('submitted_at')
-                    ->first();
+                    ->get();
                     
-                if ($livrable) {
+                if ($allLivrablesForBrief->isNotEmpty()) {
                     $status = 'RENDU';
                 } elseif ($latestBrief->end_date->endOfDay() < now()) {
                     $status = 'INVALIDE'; // Deadline passed and no work submitted
@@ -63,7 +63,8 @@ class TeacherController extends Controller
             
             return (object)[
                 'student' => $student,
-                'livrable' => $livrable,
+                'livrable' => $allLivrablesForBrief->first(), // keep reference to latest for quick link
+                'livrables_count' => $allLivrablesForBrief->count(),
                 'status' => $status,
                 'brief' => $latestBrief
             ];

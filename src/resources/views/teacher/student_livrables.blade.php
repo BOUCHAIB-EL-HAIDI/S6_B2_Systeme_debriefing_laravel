@@ -78,6 +78,7 @@
                             <thead>
                                 <tr class="text-left text-xs text-slate-500 uppercase tracking-widest border-b border-white/5">
                                     <th class="pb-4 font-extrabold">Brief</th>
+                                    <th class="pb-4 font-extrabold">Commentaire</th>
                                     <th class="pb-4 font-extrabold">Date de rendu</th>
                                     <th class="pb-4 font-extrabold">Lien</th>
                                     <th class="pb-4 font-extrabold">Actions</th>
@@ -91,6 +92,15 @@
                                         <p class="text-xs text-slate-500">Sprint: {{ $liv->brief->sprint->name ?? 'Général' }}</p>
                                     </td>
                                     <td class="py-6">
+                                        @if($liv->comment)
+                                            <div class="max-w-xs group-hover:bg-white/5 p-2 rounded-lg transition-colors">
+                                                <p class="text-xs text-slate-300 italic">"{{ $liv->comment }}"</p>
+                                            </div>
+                                        @else
+                                            <span class="text-[10px] text-slate-600 italic">Aucun commentaire</span>
+                                        @endif
+                                    </td>
+                                    <td class="py-6">
                                         <span class="text-sm text-emerald-400 font-medium">
                                             {{ \Carbon\Carbon::parse($liv->submitted_at)->format('d/m/Y H:i') }}
                                         </span>
@@ -102,7 +112,7 @@
                                         </a>
                                     </td>
                                     <td class="py-6">
-                                        <a href="{{ route('teacher.debriefing', ['student' => $student->id, 'brief' => $liv->brief_id]) }}" class="text-xs font-extrabold text-indigo-500 hover:text-indigo-400 transition-all uppercase tracking-wider italic bg-indigo-500/5 px-4 py-2 rounded-xl border border-indigo-500/10 hover:border-indigo-500/30">
+                                        <a href="{{ route('teacher.debriefing', ['student' => $student->id, 'brief' => $liv->brief_id]) }}" class="text-xs font-extrabold text-white bg-indigo-500 hover:bg-indigo-600 transition-all uppercase tracking-wider italic px-4 py-2 rounded-xl shadow-lg shadow-indigo-500/20">
                                             Évaluer
                                         </a>
                                     </td>
