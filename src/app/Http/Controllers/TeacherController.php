@@ -324,7 +324,8 @@ class TeacherController extends Controller
         $classIds = $teacher->classes->pluck('id');
         $students = User::students()
             ->whereIn('classe_id', $classIds)
-            ->orderBy('name')
+            ->orderBy('last_name')
+            ->orderBy('first_name')
             ->get();
 
         return view('teacher.progression', compact('students'));
@@ -341,7 +342,7 @@ class TeacherController extends Controller
             return [
                 'brief_title' => $d->brief->name,
                 'date' => $d->created_at->format('Y-m-d'),
-                'teacher_name' => $d->teacher->name,
+                'teacher_name' => $d->teacher->first_name . ' ' . $d->teacher->last_name,
                 'comment' => $d->comment,
                 'competences' => $d->competences->map(function($c) {
                     return [

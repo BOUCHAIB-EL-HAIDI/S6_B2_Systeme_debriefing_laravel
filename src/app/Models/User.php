@@ -129,5 +129,8 @@ class User extends Authenticatable
         return $this->hasMany(Debriefing::class, 'teacher_id');
     }
 
-
+    public function getNameAttribute()
+    {
+        return "{$this->first_name} {$this->last_name}";
+    }
 }
