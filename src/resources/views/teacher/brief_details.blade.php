@@ -117,9 +117,16 @@
                                     </p>
                                 </div>
                                 <div class="mt-4 flex justify-between items-center">
-                                    <a href="{{ route('teacher.debriefing', ['student' => $del->student_id, 'brief' => $del->brief_id]) }}" class="text-[10px] font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 group/btn">
-                                        Évaluer cet étudiant <i data-lucide="chevron-right" class="w-3 h-3 group-hover/btn:translate-x-1 transition-transform"></i>
-                                    </a>
+                                    @if($del->is_evaluated)
+                                        <a href="{{ route('teacher.debriefing', ['student' => $del->student_id, 'brief' => $del->brief_id]) }}" class="text-[10px] font-extrabold text-emerald-500 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20 flex items-center gap-1 group/btn italic">
+                                            <i data-lucide="check-circle" class="w-3 h-3"></i>
+                                            Voir évaluation
+                                        </a>
+                                    @else
+                                        <a href="{{ route('teacher.debriefing', ['student' => $del->student_id, 'brief' => $del->brief_id]) }}" class="text-[10px] font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 group/btn">
+                                            Évaluer cet étudiant <i data-lucide="chevron-right" class="w-3 h-3 group-hover/btn:translate-x-1 transition-transform"></i>
+                                        </a>
+                                    @endif
                                 </div>
                             </div>
                             @empty

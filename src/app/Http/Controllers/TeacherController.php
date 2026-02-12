@@ -147,6 +147,13 @@ class TeacherController extends Controller
             ->with('student')
             ->latest('submitted_at')
             ->get();
+
+        // Check evaluation status for each student-brief pair
+        foreach ($deliverables as $del) {
+            $del->is_evaluated = Debriefing::where('student_id', $del->student_id)
+                ->where('brief_id', $del->brief_id)
+                ->exists();
+        }
             
         return view('teacher.brief_details', compact('brief', 'deliverables'));
     }
