@@ -257,6 +257,15 @@ class TeacherController extends Controller
             'evaluations.*.status' => 'required|in:VALIDEE,INVALIDE',
         ]);
 
+        // Check if student has submitted a livrable
+        $hasLivrable = Livrable::where('brief_id', $request->brief_id)
+            ->where('student_id', $request->student_id)
+            ->exists();
+
+        if (!$hasLivrable) {
+            return redirect()->back()->with('error', 'L\'étudiant doit soumettre un livrable avant d\'être évalué.');
+        }
+
         // Check if debriefing already exists
         $exists = Debriefing::where('brief_id', $request->brief_id)
             ->where('student_id', $request->student_id)
