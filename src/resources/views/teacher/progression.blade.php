@@ -107,6 +107,7 @@
                 const history = await response.json();
                 renderHistory(history);
             } catch (e) {
+                console.error("Progression load error:", e);
                 historyContainer.innerHTML = '<p class="text-rose-500 text-center py-10">Erreur lors du chargement de l\'historique.</p>';
             }
         });

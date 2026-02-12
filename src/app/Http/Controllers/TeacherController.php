@@ -19,62 +19,75 @@ class TeacherController extends Controller
     {
         $teacher = Auth::user();
         $classes = $teacher->classes()->withCount('students')->get();
-        $briefs = $teacher->briefs()->latest()->take(5)->get();
+        $recentBriefs = $teacher->briefs()->latest()->take(5)->get();
 
-        // Get all students in teacher's classes
         $classIds = $classes->pluck('id');
         $students = User::students()
             ->whereIn('classe_id', $classIds)
-            ->with('classe')
+            ->with(['classe'])
             ->get();
-            
-        // Get the latest brief for each class taught by the teacher (only those that have started)
-        $latestBriefsByClass = [];
-        foreach ($classes as $classe) {
-            $latestBriefsByClass[$classe->id] = Brief::whereHas('sprint.classes', function($q) use ($classe) {
-                $q->where('classes.id', $classe->id);
+
+        // 1. Fetch latest started briefs for each class in bulk
+        // We fetch all briefs related to these classes and filter in memory to find the latest per class
+        $allRelatedBriefs = Brief::whereHas('sprint.classes', function($q) use ($classIds) {
+                $q->whereIn('classes.id', $classIds);
             })
             ->where('start_date', '<=', now())
-            ->latest('start_date')
-            ->first();
+            ->with('sprint.classes') // To group by class later
+            ->orderBy('start_date', 'desc')
+            ->get();
+
+        $latestBriefsByClass = [];
+        foreach ($classIds as $classId) {
+            $latestBriefsByClass[$classId] = $allRelatedBriefs->first(function($b) use ($classId) {
+                return $b->sprint->classes->contains($classId);
+            });
         }
 
-        // Map students to their status for THEIR class's latest started brief
-        $deliverablesTracking = $students->map(function($student) use ($latestBriefsByClass) {
+        $relevantBriefIds = collect($latestBriefsByClass)->pluck('id')->filter()->unique();
+        $studentIds = $students->pluck('id');
+
+        // 2. Fetch all livrables for these students and these specific briefs in bulk
+        $allLivrables = Livrable::whereIn('student_id', $studentIds)
+            ->whereIn('brief_id', $relevantBriefIds)
+            ->latest('submitted_at')
+            ->get()
+            ->groupBy(function($l) {
+                return $l->student_id . '_' . $l->brief_id;
+            });
+
+        // 3. Fetch all debriefings for these students and these specific briefs in bulk
+        $allDebriefings = Debriefing::whereIn('student_id', $studentIds)
+            ->whereIn('brief_id', $relevantBriefIds)
+            ->get()
+            ->keyBy(function($d) {
+                return $d->student_id . '_' . $d->brief_id;
+            });
+
+        // Map students to their status
+        $deliverablesTracking = $students->map(function($student) use ($latestBriefsByClass, $allLivrables, $allDebriefings) {
             $latestBrief = $latestBriefsByClass[$student->classe_id] ?? null;
-            $allLivrablesForBrief = collect();
+            $key = $student->id . '_' . ($latestBrief ? $latestBrief->id : 0);
+            
+            $studentBriefLivrables = $allLivrables->get($key) ?? collect();
             $status = 'PAS_DE_BRIEF';
             
             if ($latestBrief) {
-                // Find all submissions for this specific brief
-                $allLivrablesForBrief = Livrable::where('student_id', $student->id)
-                    ->where('brief_id', $latestBrief->id)
-                    ->latest('submitted_at')
-                    ->get();
-                    
-                if ($allLivrablesForBrief->isNotEmpty()) {
+                if ($studentBriefLivrables->isNotEmpty()) {
                     $status = 'RENDU';
-                } elseif ($latestBrief->end_date->endOfDay() < now()) {
+                } elseif ($latestBrief->end_date && $latestBrief->end_date->endOfDay() < now()) {
                     $status = 'INVALIDE'; // Deadline passed and no work submitted
                 } else {
                     $status = 'EN_ATTENTE'; // Deadline not passed yet
                 }
             }
             
-            // Check if already debriefed for this brief
-            $isEvaluated = false;
-            if ($latestBrief) {
-                $isEvaluated = Debriefing::where('student_id', $student->id)
-                    ->where('brief_id', $latestBrief->id)
-                    ->exists();
-            }
-            
             return (object)[
                 'student' => $student,
-                'livrable' => $allLivrablesForBrief->first(), // keep reference to latest for quick link
-                'livrables_count' => $allLivrablesForBrief->count(),
+                'livrable' => $studentBriefLivrables->first(),
+                'livrables_count' => $studentBriefLivrables->count(),
                 'status' => $status,
-                'is_evaluated' => $isEvaluated,
+                'is_evaluated' => $allDebriefings->has($key),
                 'brief' => $latestBrief
             ];
         });
@@ -83,22 +96,27 @@ class TeacherController extends Controller
             'briefs_count' => $teacher->briefs()->count(),
             'classes_count' => $classes->count(),
         ];
-        return view('teacher.dashboard', compact('stats', 'classes', 'briefs', 'deliverablesTracking'));
+        return view('teacher.dashboard', compact('stats', 'classes', 'recentBriefs', 'deliverablesTracking'));
     }
 
     public function studentLivrables($id)
     {
         $student = User::students()->findOrFail($id);
+        
         $livrables = Livrable::where('student_id', $id)
-            ->with('brief')
+            ->with(['brief'])
             ->latest('submitted_at')
-            ->get()
-            ->map(function($livrable) use ($id) {
-                $livrable->is_evaluated = Debriefing::where('student_id', $id)
-                    ->where('brief_id', $livrable->brief_id)
-                    ->exists();
-                return $livrable;
-            });
+            ->get();
+            
+        $briefIds = $livrables->pluck('brief_id')->unique();
+        $evaluatedBriefIds = Debriefing::where('student_id', $id)
+            ->whereIn('brief_id', $briefIds)
+            ->pluck('brief_id')
+            ->toArray();
+
+        $livrables->each(function($l) use ($evaluatedBriefIds) {
+            $l->is_evaluated = in_array($l->brief_id, $evaluatedBriefIds);
+        });
             
         return view('teacher.student_livrables', compact('student', 'livrables'));
     }
@@ -324,6 +342,7 @@ class TeacherController extends Controller
         $classIds = $teacher->classes->pluck('id');
         $students = User::students()
             ->whereIn('classe_id', $classIds)
+            ->with('classe')
             ->orderBy('last_name')
             ->orderBy('first_name')
             ->get();
@@ -335,14 +354,20 @@ class TeacherController extends Controller
     {
         $debriefings = Debriefing::where('student_id', $id)
             ->with(['brief', 'teacher', 'competences'])
-            ->latest()
+            ->latest('id') // using id since created_at might be non-standard
             ->get();
 
         $data = $debriefings->map(function($d) {
+            $date = $d->created_at instanceof \Carbon\Carbon 
+                ? $d->created_at 
+                : \Carbon\Carbon::parse($d->created_at);
+
             return [
-                'brief_title' => $d->brief->name,
-                'date' => $d->created_at->format('Y-m-d'),
-                'teacher_name' => $d->teacher->first_name . ' ' . $d->teacher->last_name,
+                'brief_title' => $d->brief ? $d->brief->name : 'N/A',
+                'date' => $date->format('Y-m-d'),
+                'teacher_name' => $d->teacher 
+                    ? ($d->teacher->first_name . ' ' . $d->teacher->last_name) 
+                    : 'Anonyme',
                 'comment' => $d->comment,
                 'competences' => $d->competences->map(function($c) {
                     return [
