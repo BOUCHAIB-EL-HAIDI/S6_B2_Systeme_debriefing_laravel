@@ -83,7 +83,7 @@
                         </span>
                     </div>
 
-                    <div class="prose prose-invert max-w-none text-slate-300 leading-relaxed text-lg">
+                    <div class="prose prose-invert max-w-none text-slate-300 leading-relaxed text-lg whitespace-pre-wrap break-words">
                         {!! nl2br(e($brief->content)) !!}
                     </div>
                 </div>
@@ -112,7 +112,7 @@
                                     </a>
                                 </div>
                                 <div class="bg-indigo-500/5 p-3 rounded-xl border border-indigo-500/10 mt-2">
-                                    <p class="text-xs text-slate-400 leading-relaxed italic">
+                                    <p class="text-xs text-slate-400 leading-relaxed italic whitespace-pre-wrap break-words">
                                         {{ $del->comment ?: "Aucun commentaire laissé par l'étudiant." }}
                                     </p>
                                 </div>
