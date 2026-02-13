@@ -19,7 +19,7 @@ class TeacherController extends Controller
     {
         $teacher = Auth::user();
         $classes = $teacher->classes()->withCount('students')->get();
-        $recentBriefs = $teacher->briefs()->latest()->take(5)->get();
+        $briefs = $teacher->briefs()->latest()->take(5)->get();
 
         $classIds = $classes->pluck('id');
         $students = User::students()
@@ -363,7 +363,7 @@ class TeacherController extends Controller
                 : \Carbon\Carbon::parse($d->created_at);
 
             return [
-                'brief_title' => $d->brief ? $d->brief->name : 'N/A',
+                'brief_title' => $d->brief ? $d->brief->title : 'N/A',
                 'date' => $date->format('Y-m-d'),
                 'teacher_name' => $d->teacher 
                     ? ($d->teacher->first_name . ' ' . $d->teacher->last_name) 
