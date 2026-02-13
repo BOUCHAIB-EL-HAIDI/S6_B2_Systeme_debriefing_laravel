@@ -1,6 +1,19 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Parcours - Debrief.me</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    </style>
+</head>
+<body class="bg-[#0f172a] text-slate-100 min-h-screen">
 
-@section('content')
 <div class="flex min-h-screen">
     <!-- Sidebar -->
     <aside class="w-64 glass border-r border-white/10 p-6 flex flex-col fixed h-full z-20">
@@ -14,10 +27,10 @@
                 <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
             </a>
             <a href="{{ route('student.briefs') }}" class="flex items-center gap-3 p-3 rounded-xl text-slate-400 hover:bg-white/5 transition-all">
-                <i data-lucide="file-text"></i> <span>Briefs</span>
+                <i data-lucide="file-text"></i> <span>Mes Briefs</span>
             </a>
-            <a href="{{ route('student.progression') }}" class="flex items-center gap-3 p-3 rounded-xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/20">
-                <i data-lucide="trending-up"></i> <span>Mon Parcours</span>
+            <a href="{{ route('student.progression') }}" class="flex items-center gap-3 p-3 rounded-xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/20">
+                <i data-lucide="award"></i> <span>Mon Parcours</span>
             </a>
         </nav>
 
@@ -77,8 +90,8 @@
                                         <p class="text-[10px] text-slate-400 line-clamp-1">{{ $comp->nom }}</p>
                                     </div>
                                     <span class="text-[10px] font-bold px-2 py-1 rounded-lg
-                                        @if($comp->pivot->status == 'Acquis') bg-emerald-500/20 text-emerald-400
-                                        @elseif($comp->pivot->status == 'En cours') bg-amber-500/20 text-amber-400
+                                        @if(in_array($comp->pivot->status, ['Acquis', 'VALIDEE'])) bg-emerald-500/20 text-emerald-400
+                                        @elseif(in_array($comp->pivot->status, ['En cours', 'A_REVOIR'])) bg-amber-500/20 text-amber-400
                                         @else bg-rose-500/20 text-rose-400 @endif">
                                         {{ $comp->pivot->status }}
                                         <span class="ml-1 opacity-50">(Niv. {{ $comp->pivot->niveau }})</span>
@@ -109,4 +122,5 @@
         lucide.createIcons();
     }
 </script>
-@endsection
+</body>
+</html>

@@ -186,7 +186,22 @@ class TeacherController extends Controller
                 ->exists();
         }
             
-        return view('teacher.brief_details', compact('brief', 'deliverables'));
+        // Calculate Global Submission Rate
+        $sprintId = $brief->sprint_id;
+        $totalStudents = User::students()
+            ->whereHas('classe', function($q) use ($sprintId) {
+                $q->whereHas('sprints', function($q2) use ($sprintId) {
+                    $q2->where('sprints.id', $sprintId);
+                });
+            })->count();
+
+        $submittedCount = Livrable::where('brief_id', $id)
+            ->distinct('student_id')
+            ->count('student_id');
+
+        $submissionRate = $totalStudents > 0 ? round(($submittedCount / $totalStudents) * 100) : 0;
+
+        return view('teacher.brief_details', compact('brief', 'deliverables', 'submissionRate', 'totalStudents', 'submittedCount'));
     }
 
     public function edit($id)

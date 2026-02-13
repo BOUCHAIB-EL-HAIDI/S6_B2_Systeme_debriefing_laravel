@@ -91,9 +91,20 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <!-- Student Deliverables -->
                     <div class="glass p-8 rounded-3xl">
-                        <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
-                            <i data-lucide="send" class="text-indigo-400"></i> Livrables des Étudiants
-                        </h3>
+                        <div class="mb-6 flex items-center justify-between">
+                            <h3 class="text-xl font-bold flex items-center gap-3">
+                                <i data-lucide="send" class="text-indigo-400"></i> Livrables
+                            </h3>
+                            <div class="flex items-center gap-3 bg-slate-900/50 px-4 py-2 rounded-xl border border-white/5">
+                                <div class="text-right">
+                                    <p class="text-[10px] text-slate-500 uppercase tracking-wider font-bold">Taux de rendu</p>
+                                    <p class="text-lg font-extrabold text-indigo-400 leading-none">{{ $submissionRate }}%</p>
+                                </div>
+                                <div class="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center">
+                                    <i data-lucide="pie-chart" class="w-5 h-5 text-indigo-400"></i>
+                                </div>
+                            </div>
+                        </div>
                         <div class="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                             @forelse($deliverables as $del)
                             <div class="p-4 bg-slate-900/50 rounded-2xl border border-white/5 hover:border-indigo-500/30 transition-all group">
