@@ -91,7 +91,7 @@
                         @forelse($briefs as $brief)
                         <tr class="hover:bg-white/5 transition-colors group">
                             <td class="px-6 py-4">
-                                <p class="font-bold text-sm">{{ $brief->title }}</p>
+                                <p class="font-bold text-sm break-words">{{ $brief->title }}</p>
                                 <span class="bg-slate-800 px-2 py-0.5 rounded text-[10px] text-slate-500 uppercase">{{ $brief->type }}</span>
                             </td>
                             <td class="px-6 py-4">

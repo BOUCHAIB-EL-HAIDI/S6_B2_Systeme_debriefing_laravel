@@ -78,15 +78,15 @@
                         <div class="space-y-4">
                             @forelse($deliverablesTracking as $track)
                             <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-indigo-500/30 transition-all group">
-                                <div class="flex items-center gap-4">
+                                <div class="flex items-center gap-4 min-w-0 flex-1">
                                     <div class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center font-bold text-indigo-400 uppercase">
                                         {{ substr($track->student->first_name, 0, 1) }}
                                     </div>
                                     <div>
-                                        <a href="{{ route('teacher.students.livrables', $track->student->id) }}" class="text-sm font-bold hover:text-indigo-400 transition-colors">
+                                        <a href="{{ route('teacher.students.livrables', $track->student->id) }}" class="text-sm font-bold hover:text-indigo-400 transition-colors break-words line-clamp-1">
                                             {{ $track->student->first_name }} {{ $track->student->last_name }}
                                         </a>
-                                        <p class="text-[10px] text-slate-500">
+                                        <p class="text-[10px] text-slate-500 break-words">
                                             @if($track->brief)
                                                 Brief: {{ $track->brief->title }}
                                             @else
