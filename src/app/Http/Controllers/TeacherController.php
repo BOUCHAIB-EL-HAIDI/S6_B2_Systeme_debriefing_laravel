@@ -101,11 +101,24 @@ class TeacherController extends Controller
 
     public function studentLivrables($id)
     {
-        $student = User::students()->findOrFail($id);
+        $student = User::with('classe')->findOrFail($id);
         
+        // Get all briefs assigned to the student's class via sprints
+        $totalBriefs = Brief::whereHas('sprint', function($q) use ($student) {
+            $q->whereHas('classes', function($q2) use ($student) {
+                $q2->where('classes.id', $student->classe_id);
+            });
+        })->count();
+
+        $submittedBriefs = Livrable::where('student_id', $id)
+            ->distinct('brief_id')
+            ->count('brief_id');
+
+        $submissionRate = $totalBriefs > 0 ? round(($submittedBriefs / $totalBriefs) * 100) : 0;
+
         $livrables = Livrable::where('student_id', $id)
-            ->with(['brief'])
-            ->latest('submitted_at')
+            ->with('brief.sprint')
+            ->orderBy('submitted_at', 'desc')
             ->get();
             
         $briefIds = $livrables->pluck('brief_id')->unique();
