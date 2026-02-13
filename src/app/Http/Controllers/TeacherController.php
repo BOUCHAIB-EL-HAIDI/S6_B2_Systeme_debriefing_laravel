@@ -131,7 +131,7 @@ class TeacherController extends Controller
             $l->is_evaluated = in_array($l->brief_id, $evaluatedBriefIds);
         });
             
-        return view('teacher.student_livrables', compact('student', 'livrables'));
+        return view('teacher.student_livrables', compact('student', 'livrables', 'submissionRate', 'totalBriefs', 'submittedBriefs'));
     }
 
     public function index()
