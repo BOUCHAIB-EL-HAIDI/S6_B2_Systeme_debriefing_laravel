@@ -42,7 +42,7 @@ class TeacherController extends Controller
         $latestBriefsByClass = [];
         foreach ($classIds as $classId) {
             $latestBriefsByClass[$classId] = $allRelatedBriefs->first(function($b) use ($classId) {
-                return $b->sprint->classes->contains($classId);
+                return $b->sprint->classes->contains('id', $classId);
             });
         }
 
