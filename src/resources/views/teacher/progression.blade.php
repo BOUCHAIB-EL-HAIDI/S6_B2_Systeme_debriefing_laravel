@@ -138,7 +138,7 @@
                     </div>
 
                     <div class="mb-6 bg-slate-900/50 p-4 rounded-xl border border-white/5">
-                        <p class="text-sm text-slate-300 italic whitespace-pre-wrap break-words">${item.comment}</p>
+                        <p class="text-sm text-slate-300 italic whitespace-pre-wrap break-words">${item.comment.replace(/^"|"$/g, '')}</p>
                     </div>
 
                     <div>

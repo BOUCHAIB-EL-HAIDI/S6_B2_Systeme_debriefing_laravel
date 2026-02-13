@@ -277,7 +277,7 @@
                         <a href="${liv.content}" target="_blank" class="text-sm text-indigo-400 hover:underline flex items-center gap-2 break-all mb-2">
                             <i data-lucide="external-link" class="w-3 h-3 flex-shrink-0"></i> Voir le travail
                         </a>
-                        ${liv.comment ? `<p class="text-xs text-slate-400 italic mt-2 border-t border-white/5 pt-2 whitespace-pre-wrap break-words">${liv.comment}</p>` : ''}
+                        ${liv.comment ? `<p class="text-xs text-slate-400 italic mt-2 border-t border-white/5 pt-2 whitespace-pre-wrap break-words">${liv.comment.replace(/^"|"$/g, '')}</p>` : ''}
                     </div>
                 `).join('');
                 lucide.createIcons();

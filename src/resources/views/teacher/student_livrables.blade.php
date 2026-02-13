@@ -94,7 +94,7 @@
                                     <td class="py-6">
                                         @if($liv->comment)
                                             <div class="max-w-xs group-hover:bg-white/5 p-2 rounded-lg transition-colors">
-                                                <p class="text-xs text-slate-300 italic whitespace-pre-wrap break-words">{{ $liv->comment }}</p>
+                                                <p class="text-xs text-slate-300 italic whitespace-pre-wrap break-words">{{ trim($liv->comment, '"') }}</p>
                                             </div>
                                         @else
                                             <span class="text-[10px] text-slate-600 italic">Aucun commentaire</span>

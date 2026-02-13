@@ -113,7 +113,7 @@
                                 </div>
                                 <div class="bg-indigo-500/5 p-3 rounded-xl border border-indigo-500/10 mt-2">
                                     <p class="text-xs text-slate-400 leading-relaxed italic whitespace-pre-wrap break-words">
-                                        {{ $del->comment ?: "Aucun commentaire laissé par l'étudiant." }}
+                                        {{ trim($del->comment, '"') ?: "Aucun commentaire laissé par l'étudiant." }}
                                     </p>
                                 </div>
                                 <div class="mt-4 flex justify-between items-center">
