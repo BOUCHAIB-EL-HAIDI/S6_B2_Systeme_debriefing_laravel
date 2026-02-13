@@ -33,8 +33,10 @@ class TeacherController extends Controller
                 $q->whereIn('classes.id', $classIds);
             })
             ->where('start_date', '<=', now())
+            ->where('is_assigned', true)
             ->with('sprint.classes') // To group by class later
             ->orderBy('start_date', 'desc')
+            ->orderBy('id', 'desc')
             ->get();
 
         $latestBriefsByClass = [];
