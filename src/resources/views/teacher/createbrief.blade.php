@@ -82,7 +82,7 @@
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Contenu / Description</label>
                                 <textarea name="content" required rows="4" placeholder="Objectifs, ressources, livrables attendus..."
-                                          class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600">{{ old('content') }}</textarea>
+                                          class="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-slate-600 whitespace-pre-wrap resize-none">{{ old('content') }}</textarea>
                                 @error('content') <p class="text-rose-500 text-xs mt-1 ml-1">{{ $message }}</p> @enderror
                             </div>
 
