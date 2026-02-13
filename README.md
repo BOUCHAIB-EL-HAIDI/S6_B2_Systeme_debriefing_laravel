@@ -41,7 +41,42 @@ Application de gestion de rendus et d'évaluations pour les formations Simplon. 
 - **Base de Données**: PostgreSQL
 - **Icônes**: Lucide Icons
 
-## Installation
+## Installation (Docker Compose) - Recommandé
+
+1. Cloner le dépôt
+```bash
+git clone [url-du-repo]
+cd [nom-du-dossier]
+```
+
+2. Lancer l'environnement
+```bash
+docker-compose up -d --build
+```
+*Cela va construire les images et lancer les conteneurs (App, DB, Adminer, etc.)*
+
+3. Accéder au conteneur de l'application
+```bash
+docker-compose exec app bash
+```
+
+4. Installer les dépendances (dans le conteneur)
+```bash
+composer install
+npm install
+npm run build
+```
+
+5. Configuration (dans le conteneur)
+- Copier `.env.example` vers `.env` (si ce n'est pas fait)
+- Générer la clé : `php artisan key:generate`
+- Migrations & Seed : `php artisan migrate --seed`
+
+6. Accès
+- Application : `http://localhost:8000` (ou port configuré)
+- Adminer (DB) : `http://localhost:8080`
+
+## Installation (Manuelle / Local)
 
 1. Cloner le dépôt
 ```bash
