@@ -81,3 +81,20 @@ Route::middleware(['auth', 'role:STUDENT'])->prefix('student')->group(function (
     Route::get('/progression', [StudentController::class, 'progression'])->name('student.progression');
 });
 
+Route::get('/debug-dashboard', function () {
+    $briefs = App\Models\Brief::with('sprint.classes')
+        ->where('start_date', '<=', now())
+        ->where('is_assigned', true)
+        ->orderBy('start_date', 'desc')
+        ->orderBy('id', 'desc')
+        ->get();
+
+    return $briefs->map(function($b) {
+        return [
+            'id' => $b->id,
+            'title' => $b->title,
+            'start_date' => $b->start_date->format('Y-m-d'),
+            'class_ids' => $b->sprint->classes->pluck('id')->toArray(),
+        ];
+    });
+});

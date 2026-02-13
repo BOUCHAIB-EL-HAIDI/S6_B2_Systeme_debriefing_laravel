@@ -33,7 +33,7 @@ class TeacherController extends Controller
                 $q->whereIn('classes.id', $classIds);
             })
             ->where('start_date', '<=', now())
-            ->where('is_assigned', true)
+            // ->where('is_assigned', true) // Temporarily removed to debug visibility
             ->with('sprint.classes') // To group by class later
             ->orderBy('start_date', 'desc')
             ->orderBy('id', 'desc')
@@ -42,7 +42,7 @@ class TeacherController extends Controller
         $latestBriefsByClass = [];
         foreach ($classIds as $classId) {
             $latestBriefsByClass[$classId] = $allRelatedBriefs->first(function($b) use ($classId) {
-                return $b->sprint->classes->contains('id', $classId);
+                return $b->sprint->classes->where('id', $classId)->isNotEmpty();
             });
         }
 
