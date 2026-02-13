@@ -138,7 +138,7 @@
                         <div class="mt-10 pt-10 border-t border-white/10 space-y-6">
                             <div class="space-y-4">
                                 <label class="text-xs text-slate-400 uppercase tracking-widest block font-bold">Feedback Constructif Global</label>
-                                <textarea name="comment" class="w-full bg-slate-900/50 border border-white/10 rounded-2xl p-4 outline-none focus:border-indigo-500 transition-all h-32 placeholder:text-slate-600" placeholder="Ex: Excellent travail sur la planification, attention aux délais sur la phase de tests..."></textarea>
+                                <textarea name="comment" class="w-full bg-slate-900/50 border border-white/10 rounded-2xl p-4 outline-none focus:border-indigo-500 transition-all h-32 placeholder:text-slate-600 whitespace-pre-wrap resize-none" placeholder="Ex: Excellent travail sur la planification, attention aux délais sur la phase de tests..."></textarea>
                             </div>
 
                             <div class="flex justify-end gap-4">
